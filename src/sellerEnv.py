@@ -30,7 +30,7 @@ class sellerEnv(gym.Env):
         self.buyeraskingprice = buyeraskingprice
 #        self.starttime = time.time()
 
-#        self.action_space = spaces.Discrete(5) #less, more, the same
+        # self.action_space = spaces.Discrete(5) #less, more, the same
 #        self.observation_space = spaces.Box(-high, high)
 
         self.seed()

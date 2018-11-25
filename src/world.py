@@ -18,7 +18,6 @@ import time
 from sellerEnv import sellerEnv
 from buyerEnv import buyerEnv
 
-import torch as th
 import random
 
 class world():
@@ -32,6 +31,7 @@ class world():
         self.totalTime = maxSteps
         self.nSellers = nSellers
         self.maxBuyerReward = -100
+        self.action_space = spaces.Discrete(3) #less, more, the same
         self.buyerEnvs = []
         self.sellerEnvs = []
 
@@ -75,7 +75,7 @@ class world():
                 self.calcFinalReward()
                 
                 
-        return th.Tensor(self.sellerStates), th.Tensor(self.buyerStates), self.sellerRewards, self.buyerRewards
+        return self.sellerStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
         
     def calcFinalReward(self):
@@ -127,7 +127,7 @@ class world():
             self.sellerRewards.append(0)
             self.buyerRewards.append(0)
         
-        return th.Tensor(self.sellerStates), th.Tensor(self.buyerStates)
+        return self.sellerStates, self.buyerStates
         
 
     

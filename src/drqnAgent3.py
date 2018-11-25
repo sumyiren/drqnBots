@@ -63,54 +63,54 @@ class dqrnAgent(object):
         with tf.variable_scope(scope):
             # Build the graph
             self.build_model()
-        
+
     def build_model(self):
-        
-        # Input 
+
+        # Input
         self.x = tf.placeholder(tf.float32, shape = [None, 4], name="x")
-        
+
         self.w_fc = self.weight_variable([lstm_size, Num_action])
         self.b_fc = self.bias_variable([Num_action])
-        
+
         self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
         self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
-        
+
         self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , flatten_size])
-        
+
         with tf.variable_scope('network'):
             self.cell = tf.contrib.rnn.BasicLSTMCell(num_units = lstm_size, state_is_tuple = True)
             self.rnn_out, self.rnn_state = tf.nn.dynamic_rnn(inputs = self.x_rnn, cell = self.cell, dtype = tf.float32)
-        
+
         # Vectorization
         self.rnn_out = self.rnn_out[:, -1, :]
         self.rnn_out = tf.reshape(self.rnn_out, shape = [-1 , lstm_size])
-        
+
         self.output = tf.add(tf.matmul(self.rnn_out, self.w_fc), self.b_fc, name="op_to_restore")
-        
-        # Loss function and Train 
+
+        # Loss function and Train
         self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action])
         self.y_prediction = tf.placeholder(tf.float32, shape = [None])
-        
+
         self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
         self.Loss = tf.reduce_mean(tf.square(self.y_prediction - self.y_target))
         self.train_step = tf.train.AdamOptimizer(Learning_rate).minimize(self.Loss)
-        
+
         # Initialize variables
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
         self.sess = tf.InteractiveSession(config=config)
         init = tf.global_variables_initializer()
         self.sess.run(init)
-        
-        
-        
-    # Initialize weights and bias 
+
+
+
+    # Initialize weights and bias
     def weight_variable(self, shape):
         return tf.Variable(self.xavier_initializer(shape))
-    
+
     def bias_variable(self, shape):
         return tf.Variable(self.xavier_initializer(shape))
-    
+
     # Xavier Weights initializer
     def xavier_initializer(self, shape):
         dim_sum = np.sum(shape)
@@ -118,8 +118,8 @@ class dqrnAgent(object):
             dim_sum += 1
         bound = np.sqrt(2.0 / dim_sum)
         return tf.random_uniform(shape, minval=-bound, maxval=bound)
-        
-        
+
+
     def get_output(self, obs, rnn_batch_size, rnn_step_size):
         """
         Predicts action values.
@@ -127,23 +127,23 @@ class dqrnAgent(object):
           sess: Tensorflow session
           s: State input of shape [batch_size, 4, 160, 160, 3]
         Returns:
-          Tensor of shape [batch_size, NUM_VALID_ACTIONS] containing the estimated 
+          Tensor of shape [batch_size, NUM_VALID_ACTIONS] containing the estimated
           action values.
         """
         return self.output.eval(feed_dict={self.x: obs, self.rnn_batch_size: rnn_batch_size, self.rnn_step_size: rnn_step_size})[0]
-    
+
     def get_output_batch(self, obs, rnn_batch_size, rnn_step_size):
 
         return self.output.eval(feed_dict={self.x: obs, self.rnn_batch_size: rnn_batch_size, self.rnn_step_size: rnn_step_size})
- 
+
 
     def trainStep(self, action_in, y_batch, observation_batch, Num_batch, step_size):
         self.train_step.run(feed_dict = {self.action_target: action_in, self.y_prediction: y_batch, self.x: observation_batch, self.rnn_batch_size: Num_batch, self.rnn_step_size: step_size})
-    
+
     def saveModel(self, step):
         saver = tf.train.Saver()
         saver.save(self.sess, './my_test_model',global_step=step)
-        
+
 #    def training
 
 
@@ -197,10 +197,10 @@ def dqrnLearning(envs):
                 dA[i].action = np.zeros([Num_action])
                 dA[i].action[random.randint(0, Num_action - 1)] = 1.0
                 action_step = np.argmax(dA[i].action)
-        
+
                 dA[i].observation_next, dA[i].reward, dA[i].terminal, dA[i].info = envs[i].step(action_step)
                 dA[i].reward -= 5 * abs(dA[i].observation_next[0])
-                
+
                 if dA[i].step % 100 == 0:
                     print('step: ' + str(dA[i].step) + ' / '  + 'state: ' + state)
         

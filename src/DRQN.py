@@ -53,8 +53,8 @@ class dqrnAgent(object):
         self.observation = None
         self.observation_next = None
         self.action = None
-        self.reward = None
-        self.terminal = None
+        self.reward = 0
+        self.terminal = False
         self.info = None
         self.step = 1
         self.score = 0
