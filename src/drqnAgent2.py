@@ -265,7 +265,7 @@ def dqrnLearning(envs):
         
                 for count, j in enumerate(drqnAgents[i].batch_end_index):
                     drqnAgents[i].action_in.append(action_batch[j])
-                    if terminal_batch[i] == True:
+                    if terminal_batch[j] == True:
                         drqnAgents[i].y_batch.append(reward_batch[j])
                     else:
                         drqnAgents[i].y_batch.append(reward_batch[j] + Gamma * np.max(Q_batch[count]))

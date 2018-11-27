@@ -5,6 +5,8 @@ import pickle
 import random
 from world import world
 from DRQN import dqrnAgent
+from DRQNseller import dqrnSeller
+import time
 
 nSellers = 1
 maxSellers = 5 #max number of sellers this is trained for
@@ -29,11 +31,11 @@ Epsilon = 1
 Final_epsilon = 0.01
 
 Num_replay_memory = 200
-Num_start_training = 1000
+Num_start_training = 10000
 Num_training = 2000
 Num_testing  = 10000
 Num_update = 250
-Num_batch = 8
+
 Num_episode_plot = 30
 
 # DRQN Parameters
@@ -62,7 +64,7 @@ def resetWorld(world):
 
 
 def performMiniBatching(sbB):
-    episode_batch = random.sample(sbB.Replay_memory, Num_batch)
+    episode_batch = random.sample(sbB.Replay_memory, sbB.Num_batch)
 
     sbB.minibatch = []
     sbB.batch_end_index = []
@@ -89,17 +91,20 @@ def performMiniBatching(sbB):
     # Get y_prediction
     sbB.y_batch = []
     sbB.action_in = []
-    Q_batch = sbB.get_output_batch(observation_next_batch, Num_batch, step_size)
+    Q_batch = sbB.get_output_batch(observation_next_batch, sbB.Num_batch, step_size)
     #            Q_batch = output.eval(feed_dict = {x: observation_next_batch, rnn_batch_size: Num_batch, rnn_step_size: step_size})
-
+    print(sbB.batch_end_index)
     for count, j in enumerate(sbB.batch_end_index):
         sbB.action_in.append(action_batch[j])
-        if terminal_batch[i] == True:
+        if terminal_batch[j] == True:
             sbB.y_batch.append(reward_batch[j])
         else:
+            print(j)
+            print(count)
+            print(Q_batch)
             sbB.y_batch.append(reward_batch[j] + Gamma * np.max(Q_batch[count]))
 
-    sbB.trainStep(sbB.action_in, sbB.y_batch, observation_batch, Num_batch, step_size)
+    sbB.trainStep(sbB.action_in, sbB.y_batch, observation_batch, sbB.Num_batch, step_size)
     # Reduce epsilon at training mode
     if sbB.epsilon > Final_epsilon:
         sbB.epsilon -= 1.0/Num_training
@@ -134,7 +139,7 @@ def saveExperience(sbB):
 obs_seller, obs_buyer = resetWorld(world)
 for i in range(nSellers):
     bB.append(dqrnAgent('BuyerAgent'+str(i)))
-    sB.append(dqrnAgent('SellerAgent'+str(i)))
+    sB.append(dqrnSeller('SellerAgent'+str(i)))
     bB[i].observation = obs_buyer[i]
     sB[i].observation = obs_seller
     bB[i].action = world.action_space.sample()
@@ -160,7 +165,6 @@ for i in range(nSellers):
     bB[i].reward, sB[i].reward = rewards_buyer[i], rewards_seller[i]
     sB[i].terminal, bB[i].terminal = done, done
 
-
 while True:
 
     if bB[0].step <= Num_start_training:
@@ -185,13 +189,13 @@ while True:
             sB[i].observation_next = obs_seller_
             bB[i].reward -= 5 * abs(bB[i].observation_next[0])
             sB[i].reward -= 5 * abs(sB[i].observation_next[0])
+            sB[i].terminal, bB[i].terminal = done, done
             if bB[i].step % 100 == 0:
                 print('step: ' + str(bB[i].step) + ' / '  + 'state: ' + state)
 
-    elif bB[0].step <= Num_start_training + Num_training:
+    elif not bB[0].terminal:
         # Training
         state = 'Training'
-
         # if random value(0 - 1) is smaller than Epsilon, action is random. Otherwise, action is the one which has the largest Q value
         if random.random() < Epsilon:
             for i in range(nSellers):
@@ -202,7 +206,6 @@ while True:
                 actions_buyer[i] = action_step
                 action_step = np.argmax(sB[i].action)
                 actions_seller[i] = action_step
-
         else:
             for i in range(nSellers):
                 Q_value = bB[i].get_output(bB[i].observation_set, 1, step_size)
@@ -217,20 +220,20 @@ while True:
                 action_step = np.argmax(sB[i].action)
                 actions_seller[i] = action_step
 
-            obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
-                    = world.step(actions_seller, actions_buyer)
-            obs_seller_ = flattenList(obs_seller_)
+        obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
+                = world.step(actions_seller, actions_buyer)
+        obs_seller_ = flattenList(obs_seller_)
+        for i in range(nSellers):
+            bB[i].observation_next = obs_buyer_[i]
+            sB[i].observation_next = obs_seller_
+            bB[i].reward -= 5 * abs(bB[i].observation_next[0])
+            sB[i].reward -= 5 * abs(sB[i].observation_next[0])
+            sB[i].terminal, bB[i].terminal = done, done
 
-            for i in range(nSellers):
-                bB[i].observation_next = obs_buyer_[i]
-                sB[i].observation_next = obs_seller_
-                bB[i].reward -= 5 * abs(bB[i].observation_next[0])
-                sB[i].reward -= 5 * abs(sB[i].observation_next[0])
 
-
-            for i in range(nSellers):
-                performMiniBatching(bB[i])
-                performMiniBatching(sB[i])
+        for i in range(nSellers):
+            performMiniBatching(bB[i])
+            performMiniBatching(sB[i])
 
 
     # Save experience to the Replay memory
@@ -239,7 +242,8 @@ while True:
         saveExperience(sB[i])
 
     # Terminal
-    if bB[0].terminal == True:
+    if bB[0].terminal:
+        print('terminal')
         obs_seller, obs_buyer = resetWorld(world)
         for i in range(nSellers):
             print('step: ' + str(bB[i].step) + ' / ' + 'episode: ' + str(bB[i].episode) + ' / ' + 'state: ' + state  + ' / '  + 'epsilon: ' + str(bB[i].epsilon) + ' / '  + 'score: ' + str(bB[i].score))
@@ -269,6 +273,9 @@ while True:
             sB[i].observation_set = []
             for j in range(step_size):
                 sB[i].observation_set.append(sB[i].observation)
+                
+            sB[i].terminal = False
+            bB[i].terminal = False
 
 
 

@@ -35,7 +35,7 @@ step_size = 4
 lstm_size = 256
 flatten_size = 4
 
-class dqrnAgent(object):
+class dqrnSeller(object):
     def __init__(self, scope):
         self.scope = scope
         self.episode_memory = []
@@ -56,7 +56,7 @@ class dqrnAgent(object):
         self.score = 0
         self.episode = 0
         self.epsilon = 1
-        self.Num_batch = 8
+        self.Num_batch = 6
         with tf.variable_scope(scope):
             # Build the graph
             self.build_model()
@@ -64,7 +64,7 @@ class dqrnAgent(object):
     def build_model(self):
         
         # Input 
-        self.x = tf.placeholder(tf.float32, shape = [None, 4], name="x")
+        self.x = tf.placeholder(tf.float32, shape = [None, 3], name="x")
         
         self.w_fc = self.weight_variable([lstm_size, Num_action])
         self.b_fc = self.bias_variable([Num_action])
@@ -144,3 +144,6 @@ class dqrnAgent(object):
 
 
 
+
+        
+        
