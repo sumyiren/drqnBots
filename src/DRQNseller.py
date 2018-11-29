@@ -22,7 +22,6 @@ Learning_rate = 0.00025
 Epsilon = 1 
 Final_epsilon = 0.01 
 
-Num_replay_memory = 200
 Num_start_training = 1000
 Num_training = 2000
 Num_testing  = 10000 
@@ -31,9 +30,9 @@ Num_batch = 8
 Num_episode_plot = 30
 
 # DRQN Parameters
-step_size = 4
+#step_size = 4
 lstm_size = 256
-flatten_size = 4
+flatten_size = 3
 
 class dqrnSeller(object):
     def __init__(self, scope):

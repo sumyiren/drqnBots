@@ -40,7 +40,6 @@ class world():
             determination = 1 #random.randint(1,5)
             self.buyerEnvs.append(buyerEnv(self.totalTime, self.buyeraskingPrice, self.askingPrice, self.maxPrice, determination))
 
-
         self.sellerStates = []
         self.buyerStates = []
         self.sellerRewards = []
@@ -99,7 +98,6 @@ class world():
 #        print(self.sellerRewards, self.buyerRewards)
 
         
-    
     def reset(self):
         n1 = 50
         n2 = 100

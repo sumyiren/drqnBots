@@ -30,8 +30,8 @@ Learning_rate = 0.00025
 Epsilon = 1
 Final_epsilon = 0.01
 
-Num_replay_memory = 200
-Num_start_training = 10000
+Num_replay_memory = 200000
+Num_start_training = 200000
 Num_training = 2000
 Num_testing  = 10000
 Num_update = 250
@@ -39,7 +39,7 @@ Num_update = 250
 Num_episode_plot = 30
 
 # DRQN Parameters
-step_size = 4
+step_size = 149
 lstm_size = 256
 flatten_size = 4
 
@@ -49,7 +49,7 @@ buyerRewardArr = []
 
 bB = []
 sB = []
-
+count = 0
 
 def flattenList(list):
     flat_list = [item for sublist in list for item in sublist]
@@ -93,15 +93,11 @@ def performMiniBatching(sbB):
     sbB.action_in = []
     Q_batch = sbB.get_output_batch(observation_next_batch, sbB.Num_batch, step_size)
     #            Q_batch = output.eval(feed_dict = {x: observation_next_batch, rnn_batch_size: Num_batch, rnn_step_size: step_size})
-    print(sbB.batch_end_index)
     for count, j in enumerate(sbB.batch_end_index):
         sbB.action_in.append(action_batch[j])
         if terminal_batch[j] == True:
             sbB.y_batch.append(reward_batch[j])
         else:
-            print(j)
-            print(count)
-            print(Q_batch)
             sbB.y_batch.append(reward_batch[j] + Gamma * np.max(Q_batch[count]))
 
     sbB.trainStep(sbB.action_in, sbB.y_batch, observation_batch, sbB.Num_batch, step_size)
@@ -218,6 +214,7 @@ while True:
                 sB[i].action = np.zeros([Num_action])
                 sB[i].action[np.argmax(Q_value)] = 1
                 action_step = np.argmax(sB[i].action)
+#                print(action_step)
                 actions_seller[i] = action_step
 
         obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
@@ -243,10 +240,23 @@ while True:
 
     # Terminal
     if bB[0].terminal:
-        print('terminal')
+        if count % 1 == 0:        
+            print('DONE')
+            for i in range(nSellers):
+                print('Case ' +str(i))
+                print('SellerAsk = ' +str(obs_buyer_[i][0])+ 'BuyerAsk = ' + str(obs_buyer_[i][1]))
+           
+
         obs_seller, obs_buyer = resetWorld(world)
+        
+        if count % 1 == 0:
+            print('------------------------------------')
+            print('Initial Conditions:' + str(count))
+            print(obs_seller)
+            print(obs_buyer)
+        count = count + 1
         for i in range(nSellers):
-            print('step: ' + str(bB[i].step) + ' / ' + 'episode: ' + str(bB[i].episode) + ' / ' + 'state: ' + state  + ' / '  + 'epsilon: ' + str(bB[i].epsilon) + ' / '  + 'score: ' + str(bB[i].score))
+#            print('step: ' + str(bB[i].step) + ' / ' + 'episode: ' + str(bB[i].episode) + ' / ' + 'state: ' + state  + ' / '  + 'epsilon: ' + str(bB[i].epsilon) + ' / '  + 'score: ' + str(bB[i].score))
 
             if len(bB[i].episode_memory) > step_size:
                 bB[i].Replay_memory.append(bB[i].episode_memory)
@@ -260,7 +270,7 @@ while True:
             for j in range(step_size):
                 bB[i].observation_set.append(bB[i].observation)
 
-            print('step: ' + str(sB[i].step) + ' / ' + 'episode: ' + str(sB[i].episode) + ' / ' + 'state: ' + state  + ' / '  + 'epsilon: ' + str(sB[i].epsilon) + ' / '  + 'score: ' + str(sB[i].score))
+#            print('step: ' + str(sB[i].step) + ' / ' + 'episode: ' + str(sB[i].episode) + ' / ' + 'state: ' + state  + ' / '  + 'epsilon: ' + str(sB[i].epsilon) + ' / '  + 'score: ' + str(sB[i].score))
 
             if len(sB[i].episode_memory) > step_size:
                 sB[i].Replay_memory.append(sB[i].episode_memory)
@@ -276,6 +286,7 @@ while True:
                 
             sB[i].terminal = False
             bB[i].terminal = False
+
 
 
 
