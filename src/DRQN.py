@@ -136,9 +136,9 @@ class dqrnAgent(object):
     def trainStep(self, action_in, y_batch, observation_batch, Num_batch, step_size):
         self.train_step.run(feed_dict = {self.action_target: action_in, self.y_prediction: y_batch, self.x: observation_batch, self.rnn_batch_size: Num_batch, self.rnn_step_size: step_size})
     
-    def saveModel(self, step):
+    def saveModel(self, step, i):
         saver = tf.train.Saver()
-        saver.save(self.sess, './my_test_model',global_step=step)
+        saver.save(self.sess, './buyer_model_'+str(i),global_step=step)
         
 
 

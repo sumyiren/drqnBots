@@ -32,7 +32,7 @@ Num_episode_plot = 30
 # DRQN Parameters
 #step_size = 4
 lstm_size = 256
-flatten_size = 3
+flatten_size = 6
 
 class dqrnSeller(object):
     def __init__(self, scope):
@@ -63,7 +63,7 @@ class dqrnSeller(object):
     def build_model(self):
         
         # Input 
-        self.x = tf.placeholder(tf.float32, shape = [None, 3], name="x")
+        self.x = tf.placeholder(tf.float32, shape = [None, 6], name="x")
         
         self.w_fc = self.weight_variable([lstm_size, Num_action])
         self.b_fc = self.bias_variable([Num_action])
@@ -136,9 +136,9 @@ class dqrnSeller(object):
     def trainStep(self, action_in, y_batch, observation_batch, Num_batch, step_size):
         self.train_step.run(feed_dict = {self.action_target: action_in, self.y_prediction: y_batch, self.x: observation_batch, self.rnn_batch_size: Num_batch, self.rnn_step_size: step_size})
     
-    def saveModel(self, step):
+    def saveModel(self, step, i):
         saver = tf.train.Saver()
-        saver.save(self.sess, './my_test_model',global_step=step)
+        saver.save(self.sess, './seller_model_'+str(i),global_step=step)
         
 
 

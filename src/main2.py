@@ -1,18 +1,13 @@
 
 import numpy as np
-import torch as th
-import pickle
 import random
 from world import world
 from DRQN import dqrnAgent
 from DRQNseller import dqrnSeller
-import time
 
-nSellers = 1
+nSellers = 2
 maxSellers = 5 #max number of sellers this is trained for
 reward_record = []
-np.random.seed(1234)
-th.manual_seed(1234)
 
 n_agents = nSellers
 n_states = 3 #FIXTHIS!!!
@@ -40,8 +35,8 @@ Num_episode_plot = 30
 
 # DRQN Parameters
 step_size = 149
-lstm_size = 256
-flatten_size = 4
+#lstm_size = 256
+#flatten_size = 4
 
 world = world(nSellers, max_steps)
 sellerRewardArr= []
@@ -107,7 +102,7 @@ def performMiniBatching(sbB):
 
 
 
-def saveExperience(sbB):
+def saveExperience(sbB, i):
     # Save experience to the Replay memory
     sbB.episode_memory.append([sbB.observation, sbB.action, sbB.reward, sbB.observation_next, sbB.terminal])
 
@@ -118,9 +113,9 @@ def saveExperience(sbB):
     sbB.step += 1
     sbB.score += sbB.reward
 
-    # if sbB.step%5000 == 0:
-    #     print('SAVED')
-    #     sbB.saveModel(5000)
+    if sbB.step%100 == 0:
+        print('SAVED')
+        sbB.saveModel(sbB.step, i)
 
 
     sbB.observation = sbB.observation_next
@@ -235,8 +230,8 @@ while True:
 
     # Save experience to the Replay memory
     for i in range(nSellers):
-        saveExperience(bB[i])
-        saveExperience(sB[i])
+        saveExperience(bB[i],i)
+        saveExperience(sB[i],i)
 
     # Terminal
     if bB[0].terminal:
