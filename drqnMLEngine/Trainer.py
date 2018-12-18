@@ -26,7 +26,7 @@ class Trainer(object):
         self.Num_action = 3
         self.Gamma = 0.99
         self.Learning_rate = 0.00025
-        self.Epsilon = 1
+        self.Epsilon = 0
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 200000
@@ -46,6 +46,7 @@ class Trainer(object):
         self.count = 0
         self.save_folder = args.job_dir
         self.sess = None
+        self.saver = None
 
     def flattenList(self, list):
         flat_list = [item for sublist in list for item in sublist]
@@ -100,9 +101,13 @@ class Trainer(object):
         if sbB.epsilon > self.Final_epsilon:
             sbB.epsilon -= 1.0/self.Num_training
 
+    def saveModel(self, step):
+        print('SAVED MODEL')
+        self.saver = tf.train.Saver()
+        self.saver.save(self.sess, self.save_folder+'/model_', global_step=step)
 
 
-    def saveExperience(self, sbB, i):
+    def saveExperience(self, sbB):
         # Save experience to the Replay memory
         sbB.episode_memory.append([sbB.observation, sbB.action, sbB.reward, sbB.observation_next, sbB.terminal])
 
@@ -219,7 +224,7 @@ class Trainer(object):
                 else:
 
                     for i in range(self.nSellers):
-                        Q_value = self.bB[i].get_output(bB[i].observation_set, 1, self.step_size)
+                        Q_value = self.bB[i].get_output(self.bB[i].observation_set, 1, self.step_size)
                         self.bB[i].action = np.zeros([self.Num_action])
                         self.bB[i].action[np.argmax(Q_value)] = 1
                         action_step = np.argmax(self.bB[i].action)
@@ -254,8 +259,8 @@ class Trainer(object):
 
             # Save experience to the Replay memory
             for i in range(self.nSellers):
-                self.saveExperience(self.bB[i],i)
-            self.saveExperience(self.sBA,i)
+                self.saveExperience(self.bB[i])
+            self.saveExperience(self.sBA)
 
 
             # Terminal
@@ -268,13 +273,9 @@ class Trainer(object):
 
                 # # Run Saver here
                 # if self.bB[0].step > self.Num_start_training:
-                #     for i in range(self.nSellers):
-                #         sbB = self.bB[i]
-                #         print('SAVED at ' + str(sbB.step))
-                #         sbB.saveModel(self.save_folder, sbB.step, i)
-                #         sbB = self.sB[i]
-                #         print('SAVED at ' + str(sbB.step))
-                #         sbB.saveModel(self.save_folder, sbB.step, i)
+
+                if self.count % 1 == 0 and self.bB[0].step > self.Num_start_training:
+                    self.saveModel(self.count)
 
                 obs_seller, obs_buyer = self.resetWorld(world)
 

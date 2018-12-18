@@ -4,13 +4,7 @@
 
 # Import modules 
 import tensorflow as tf
-import random
 import numpy as np
-import copy
-import matplotlib.pyplot as plt
-import datetime
-import time
-import gym
 
 envs = []
 algorithm = 'DRQN'

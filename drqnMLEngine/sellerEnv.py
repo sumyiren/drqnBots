@@ -9,13 +9,8 @@ Created on Fri Jul 27 15:18:58 2018
 #Seller Environment
 
 
-import math
 import gym
-from gym import spaces, logger
 from gym.utils import seeding
-import numpy as np
-import time
-import torch as th
 class sellerEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
