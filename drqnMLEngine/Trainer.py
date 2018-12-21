@@ -47,6 +47,7 @@ class Trainer(object):
         self.save_folder = args.job_dir
         self.sess = None
         self.saver = None
+        self.Num_batch = 8
 
     def flattenList(self, list):
         flat_list = [item for sublist in list for item in sublist]
@@ -104,7 +105,7 @@ class Trainer(object):
     def saveModel(self, step):
         print('SAVED MODEL')
         self.saver = tf.train.Saver()
-        self.saver.save(self.sess, self.save_folder+'/model_', global_step=step)
+        self.saver.save(self.sess, self.save_folder+'/model', global_step=step)
 
 
     def saveExperience(self, sbB):
@@ -224,13 +225,13 @@ class Trainer(object):
                 else:
 
                     for i in range(self.nSellers):
-                        Q_value = self.bB[i].get_output(self.bB[i].observation_set, 1, self.step_size)
+                        Q_value = self.bB[i].get_output(self.bB[i].observation_set, self.Num_batch, self.step_size)
                         self.bB[i].action = np.zeros([self.Num_action])
                         self.bB[i].action[np.argmax(Q_value)] = 1
                         action_step = np.argmax(self.bB[i].action)
                         actions_buyer[i] = action_step
 
-                    Q_value = self.sBA.get_output(self.sBA.observation_set, 1, self.step_size)
+                    Q_value = self.sBA.get_output(self.sBA.observation_set, self.Num_batch, self.step_size)
                     self.sBA.action = []
                     for i in range(self.nSellers):
                         #                sBA.action[i] = np.argmax(Q_value[i:i+3])
