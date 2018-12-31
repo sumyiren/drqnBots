@@ -26,16 +26,12 @@ class Trainer(object):
         self.Num_action = 3
         self.Gamma = 0.99
         self.Learning_rate = 0.00025
-        self.Epsilon = 0
+        self.Epsilon = 1
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 200000
-        self.Num_start_training = 2000
-        self.Num_training = 2000
-        self.Num_testing  = 10000
-        self.Num_update = 250
-
-        self.Num_episode_plot = 30
+        self.Num_start_training = 20000
+        self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
         self.step_size = 149
@@ -137,10 +133,12 @@ class Trainer(object):
         obs_seller, obs_buyer = self.resetWorld(world)
         for i in range(self.nSellers):
             self.bB.append(dqrnBuyer('BuyerAgent'+str(i)))
+            self.bB[i].build_model()
             self.bB[i].observation = obs_buyer[i]
             self.bB[i].action = self.world.action_space.sample()
 
         self.sBA = dqrnSeller('SellerAgent')
+        self.sBA.build_model()
         self.sBA.observation = obs_seller
         self.sBA.action = [self.world.action_space.sample()]*self.nSellers
 
@@ -275,7 +273,7 @@ class Trainer(object):
                 # # Run Saver here
                 # if self.bB[0].step > self.Num_start_training:
 
-                if self.count % 1 == 0 and self.bB[0].step > self.Num_start_training:
+                if self.count % 200 == 0 and self.bB[0].step > self.Num_start_training:
                     self.saveModel(self.count)
 
                 obs_seller, obs_buyer = self.resetWorld(world)

@@ -51,40 +51,39 @@ class dqrnSeller(object):
         self.episode = 0
         self.epsilon = 1
         self.Num_batch = 6
-        with tf.variable_scope(scope):
-            # Build the graph
-            self.build_model()
+        
 
     def build_model(self):
 
-        # Input
-        self.x = tf.placeholder(tf.float32, shape = [None, 3*nSellers], name="x")
-
-        self.w_fc = self.weight_variable([lstm_size, Num_action])
-        self.b_fc = self.bias_variable([Num_action])
-
-        self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
-        self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
-
-        self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , flatten_size])
-
-        with tf.variable_scope('network'):
-            self.cell = tf.contrib.rnn.BasicLSTMCell(num_units = lstm_size, state_is_tuple = True)
-            self.rnn_out, self.rnn_state = tf.nn.dynamic_rnn(inputs = self.x_rnn, cell = self.cell, dtype = tf.float32)
-
-        # Vectorization
-        self.rnn_out = self.rnn_out[:, -1, :]
-        self.rnn_out = tf.reshape(self.rnn_out, shape = [-1 , lstm_size])
-
-        self.output = tf.add(tf.matmul(self.rnn_out, self.w_fc), self.b_fc, name="op_to_restore")
-
-        # Loss function and Train
-        self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action], name="action_target")
-        self.y_prediction = tf.placeholder(tf.float32, shape = [None], name="y_prediction")
-
-        self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
-        self.Loss = tf.reduce_mean(tf.square(self.y_prediction - self.y_target))
-        self.train_step = tf.train.AdamOptimizer(Learning_rate).minimize(self.Loss)
+        with tf.variable_scope(self.scope):
+            # Input
+            self.x = tf.placeholder(tf.float32, shape = [None, 3*nSellers], name="x")
+    
+            self.w_fc = self.weight_variable([lstm_size, Num_action])
+            self.b_fc = self.bias_variable([Num_action])
+    
+            self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
+            self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
+    
+            self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , flatten_size])
+    
+            with tf.variable_scope('network'):
+                self.cell = tf.contrib.rnn.BasicLSTMCell(num_units = lstm_size, state_is_tuple = True)
+                self.rnn_out, self.rnn_state = tf.nn.dynamic_rnn(inputs = self.x_rnn, cell = self.cell, dtype = tf.float32)
+    
+            # Vectorization
+            self.rnn_out = self.rnn_out[:, -1, :]
+            self.rnn_out = tf.reshape(self.rnn_out, shape = [-1 , lstm_size])
+    
+            self.output = tf.add(tf.matmul(self.rnn_out, self.w_fc), self.b_fc, name="op_to_restore")
+    
+            # Loss function and Train
+            self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action], name="action_target")
+            self.y_prediction = tf.placeholder(tf.float32, shape = [None], name="y_prediction")
+    
+            self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
+            self.Loss = tf.reduce_mean(tf.square(self.y_prediction - self.y_target))
+            self.train_step = tf.train.AdamOptimizer(Learning_rate).minimize(self.Loss)
 
         # Initialize variables
     #        config = tf.ConfigProto(log_device_placement=True)
