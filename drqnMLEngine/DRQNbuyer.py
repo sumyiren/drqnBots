@@ -52,7 +52,7 @@ class dqrnBuyer(object):
         self.Num_batch = 8
         
     def build_model(self):
-        with tf.variable_scope(scope):
+        with tf.variable_scope(self.scope):
 
             # Input 
             self.x = tf.placeholder(tf.float32, shape = [None, 4], name="x")
