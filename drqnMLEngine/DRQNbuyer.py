@@ -13,8 +13,6 @@ algorithm = 'DRQN'
 Num_action = 3
 Gamma = 0.99
 Learning_rate = 0.00025
-Epsilon = 1
-Final_epsilon = 0.01
 
 Num_start_training = 1000
 Num_training = 2000
@@ -48,7 +46,6 @@ class dqrnBuyer(object):
         self.step = 1
         self.score = 0
         self.episode = 0
-        self.epsilon = 1
         self.Num_batch = 8
         
     def build_model(self):

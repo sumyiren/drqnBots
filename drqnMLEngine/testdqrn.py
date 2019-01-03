@@ -21,10 +21,6 @@ from DRQNbuyer import dqrnBuyer
 # State  -> x, x_dot, theta, theta_dot
 # Action -> force (+1, -1)
 
-env = gym.make('CartPole-v0')
-game_name = 'CartPole'
-algorithm = 'DRQN'
-
 # Parameter setting 
 Num_action = 3
 Gamma = 0.99
@@ -43,15 +39,13 @@ nSellers = 2
 max_steps = 150
 
 # DRQN Parameters
-step_size = 149
-lstm_size = 256
-flatten_size = 4
+step_size = 75
 
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/model-15.meta')
-saver.restore(sess, '../output/model-15')
+saver = tf.train.import_meta_graph('../output/test_15/model-600.meta')
+saver.restore(sess, '../output/test_15/model-600')
 
 sBA = dqrnSeller('SellerAgent')
 bB = []
@@ -63,11 +57,12 @@ sBA.rnn_step_size  = graph.get_tensor_by_name("SellerAgent/rnn_step_size:0")
 sBA.output = graph.get_tensor_by_name("SellerAgent/op_to_restore:0")
 
 for i in range(nSellers):
-    bB.append(dqrnBuyer('BuyerAgent'+str(i)))
-    bB[i].x = graph.get_tensor_by_name('BuyerAgent'+str(i)+'/x:0')
-    bB[i].rnn_batch_size = graph.get_tensor_by_name('BuyerAgent'+str(i)+'/rnn_batch_size:0')
-    bB[i].rnn_step_size  = graph.get_tensor_by_name('BuyerAgent'+str(i)+'/rnn_step_size:0')
-    bB[i].output = graph.get_tensor_by_name('BuyerAgent'+str(i)+'/op_to_restore:0')
+    j = i
+    bB.append(dqrnBuyer('BuyerAgent'+str(j)))
+    bB[i].x = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/x:0')
+    bB[i].rnn_batch_size = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_batch_size:0')
+    bB[i].rnn_step_size  = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_step_size:0')
+    bB[i].output = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/op_to_restore:0')
 
 
 def flattenList(list):
@@ -97,22 +92,22 @@ for i in range(nSellers):
         bB[i].observation_set.append(bB[i].observation)
     
 #sellers
-Q_value = sBA.output.eval(session=sess, feed_dict={sBA.x: sBA.observation_set, sBA.rnn_batch_size: 1, sBA.rnn_step_size: step_size})[0]
-action = []
+Q_value = sBA.output.eval(session=sess, feed_dict={sBA.x: sBA.observation_set, sBA.rnn_step_size: step_size})[0]
+sBA.action = []
 actions_seller = [world.action_space.sample()]*nSellers
 for i in range(nSellers):
     #                sBA.action[i] = np.argmax(Q_value[i:i+3])
     Q_value_pseudo = Q_value[i:i+3]
     sBA_pseudo_action = np.zeros([Num_action])
     sBA_pseudo_action[np.argmax(Q_value_pseudo)] = 1
-    action.extend(sBA_pseudo_action)
+    sBA.action.extend(sBA_pseudo_action)
     action_step = np.argmax(sBA_pseudo_action)
     actions_seller[i] = action_step   
 
 #buyers
 actions_buyer = [world.action_space.sample()]*nSellers
 for i in range(nSellers):
-    Q_value = bB[i].output.eval(session=sess, feed_dict={bB[i].x: bB[i].observation_set, bB[i].rnn_batch_size: 1, bB[i].rnn_step_size: step_size})[0]
+    Q_value = bB[i].output.eval(session=sess, feed_dict={bB[i].x: bB[i].observation_set, bB[i].rnn_step_size: step_size})[0]
     bB[i].action = np.zeros([Num_action])
     bB[i].action[np.argmax(Q_value)] = 1
     action_step = np.argmax(bB[i].action)
@@ -126,20 +121,20 @@ while step < max_steps:
         print('nSeller:'+str(i))
         print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]))
 
-    Q_value = sBA.output.eval(session=sess, feed_dict={sBA.x: sBA.observation_set, sBA.rnn_batch_size: 1, sBA.rnn_step_size: step_size})[0]
+    Q_value = sBA.output.eval(session=sess, feed_dict={sBA.x: sBA.observation_set, sBA.rnn_step_size: step_size})[0]
     for i in range(nSellers):
         #                sBA.action[i] = np.argmax(Q_value[i:i+3])
         Q_value_pseudo = Q_value[i:i+3]
         sBA_pseudo_action = np.zeros([Num_action])
         sBA_pseudo_action[np.argmax(Q_value_pseudo)] = 1
-        action.extend(sBA_pseudo_action)
+        sBA.action.extend(sBA_pseudo_action)
         action_step = np.argmax(sBA_pseudo_action)
-        actions_seller[i] = action_step  
+        actions_seller[i] = action_step
 
     #buyers
     actions_buyer = [world.action_space.sample()]*nSellers
     for i in range(nSellers):
-        Q_value = bB[i].output.eval(session=sess, feed_dict={bB[i].x: bB[i].observation_set, bB[i].rnn_batch_size: 1, bB[i].rnn_step_size: step_size})[0]
+        Q_value = bB[i].output.eval(session=sess, feed_dict={bB[i].x: bB[i].observation_set, bB[i].rnn_step_size: step_size})[0]
         bB[i].action = np.zeros([Num_action])
         bB[i].action[np.argmax(Q_value)] = 1
         action_step = np.argmax(bB[i].action)
@@ -162,3 +157,8 @@ while step < max_steps:
     step = step+1
     
     obs_buyer = obs_buyer_
+
+    
+    
+    
+    
