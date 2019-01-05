@@ -39,13 +39,13 @@ nSellers = 2
 max_steps = 150
 
 # DRQN Parameters
-step_size = 75
+step_size = 50
 
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/test_15/model-600.meta')
-saver.restore(sess, '../output/test_15/model-600')
+saver = tf.train.import_meta_graph('../output/test_15/model-1000.meta')
+saver.restore(sess, '../output/test_15/model-1000')
 
 sBA = dqrnSeller('SellerAgent')
 bB = []

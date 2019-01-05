@@ -10,7 +10,7 @@ from drqnMLEngine.DRQNseller import dqrnSeller
 class Trainer(object):
 
     def __init__(self, args):
-        self.nSellers = 2
+        self.nSellers = 1
         self.reward_record = []
 
         self.n_agents = self.nSellers
@@ -20,13 +20,13 @@ class Trainer(object):
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
         self.max_steps = 150
-        self.n_episode = 1050
+        self.n_episode = 2050
 
         # Parameter setting
         self.Num_action = 3
         self.Gamma = 0.99
         self.Learning_rate = 0.00025
-        self.Epsilon = 1
+        self.Epsilon = 0.1
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 2000000
@@ -34,7 +34,7 @@ class Trainer(object):
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
-        self.step_size = 50
+        self.step_size = 100
 
         self.world = world(self.nSellers, self.max_steps)
         self.bB = []
@@ -45,6 +45,7 @@ class Trainer(object):
         self.saver = None
         self.Num_batch = 8
         self.episode_no = 0
+        self.isRandom = True
 
     def flattenList(self, list):
         flat_list = [item for sublist in list for item in sublist]
@@ -207,7 +208,8 @@ class Trainer(object):
                 # Training
                 state = 'Training'
                 # if random value(0 - 1) is smaller than Epsilon, action is random. Otherwise, action is the one which has the largest Q value
-                if random.random() < self.Epsilon:
+#                if random.random() < self.Epsilon:
+                if self.isRandom:
                     for i in range(self.nSellers):
                         self.bB[i].action = np.zeros([self.Num_action])
                         self.bB[i].action[random.randint(0, self.Num_action - 1)] = 1.0
@@ -222,7 +224,6 @@ class Trainer(object):
                         action_step = np.argmax(sBA_pseudo_action)
                         actions_seller[i] = action_step
                 else:
-
                     for i in range(self.nSellers):
                         Q_value = self.bB[i].get_output(self.bB[i].observation_set, self.Num_batch, self.step_size)
                         self.bB[i].action = np.zeros([self.Num_action])
@@ -256,8 +257,8 @@ class Trainer(object):
                     self.performMiniBatching(self.bB[i])
                 self.performMiniBatching(self.sBA)
                 
-                if self.Epsilon > self.Final_epsilon:
-                    self.Epsilon -= 1.0/self.Num_training
+#                if self.Epsilon > self.Final_epsilon:
+#                    self.Epsilon -= 1.0/self.Num_training
                 
             
             # Save experience to the Replay memory
@@ -277,7 +278,7 @@ class Trainer(object):
                 # # Run Saver here
                 # if self.bB[0].step > self.Num_start_training:
 
-                if self.count % 200 == 0 and self.bB[0].step > self.Num_start_training:
+                if self.count % 500 == 0 and self.bB[0].step > self.Num_start_training:
                     self.saveModel(self.count)
 
                 obs_seller, obs_buyer = self.resetWorld(world)
@@ -317,6 +318,8 @@ class Trainer(object):
                     self.sBA.observation_set.append(self.sBA.observation)
 
                 self.sBA.terminal = False
+                
+                self.isRandom = random.random() < self.Epsilon
                 
                 #check ending here
                 if self.episode_no > self.n_episode:
