@@ -26,15 +26,15 @@ class Trainer(object):
         self.Num_action = 3
         self.Gamma = 0.99
         self.Learning_rate = 0.00025
-        self.Epsilon = 0.1
+        self.Epsilon = 0.2
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 2000000
-        self.Num_start_training = 20000
+        self.Num_start_training = 50000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
-        self.step_size = 100
+        self.step_size = 50
 
         self.world = world(self.nSellers, self.max_steps)
         self.bB = []

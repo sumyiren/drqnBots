@@ -14,8 +14,7 @@ class buyerEnv(gym.Env):
     }
     AVAIL_TORQUE = [-1., 0., +1]
 
-    def __init__(self, totalTime, buyeraskingprice,askingprice, maxprice, determination):
-        self.buyeraskingprice = buyeraskingprice
+    def __init__(self, totalTime, askingprice, maxprice, determination):
         self.askingprice = askingprice
         self.maxprice = maxprice
         self.timeLeft = totalTime
@@ -47,68 +46,38 @@ class buyerEnv(gym.Env):
         done = timeLeft <= 0 
         done = bool(done)
         self.state = (sellerask, buyerask, timeLeft, determination)       
-#        print("BuyerBot")
-#        print("sellerask: "+ str(sellerask))
-#        print("buyerask: "+ str(buyerask))
-
         return np.array(self.state), done
 
     def calcReward(self, sellerask, buyerask , done):
         
         reward = 0
-#        det_factor = 4**self.determination
         
         if done:
             if buyerask == sellerask:
-                
                 if buyerask > self.maxprice:
-#                    reward += -2*(buyerask - self.maxprice)#-(buyerask-self.maxprice)/self.maxprice*0.1
-                    reward += 2/(buyerask-self.maxprice)  
-                    reward = reward*self.determination
-                elif buyerask <= self.askingprice:
-                    if buyerask > 0:
-                        reward += 2*(self.askingprice - buyerask)#(self.askingprice - buyerask)/self.askingprice*0.1
+                    reward += -1 * abs(buyerask - self.maxprice)
                 elif (buyerask <= self.maxprice and buyerask > self.askingprice):
-                    reward += 2
-                    reward += reward*self.determination
+                    reward += abs(buyerask - self.maxprice)
+                elif buyerask <= self.askingprice:
+                    reward += 2* abs(buyerask - self.askingprice)
                     
-#                reward += 4**self.determination
             else:
-                if buyerask < sellerask:
-                    reward += -2 * abs(buyerask - sellerask)
+                reward += -1 * abs(buyerask - self.maxprice)
 
-#                if buyerask > self.maxprice:
-#                    reward += -0.5*(buyerask - self.maxprice)#-(buyerask-self.maxprice)/self.maxprice*0.1
-#                elif buyerask <= self.askingprice:
-#                    if buyerask > 0:
-#                        reward += 0.5#*(self.askingprice - buyerask)#(self.askingprice - buyerask)/self.askingprice*0.1
-#                elif (buyerask <= self.maxprice and buyerask > self.askingprice):
-#                    reward += 0.5
-                    
                 
             if buyerask <= 0:
                 reward += -2
                 
         else:
-#            if buyerask == sellerask:
-#                reward += 1
-#            
-##                reward += det_factor
-#            elif buyerask > sellerask:
-#                reward += -1 * abs(buyerask - sellerask)
-#            elif buyerask < sellerask:
-##                reward += 1/abs(buyerask-sellerask)
-#                reward += -1*abs(buyerask-sellerask)
 #                
             if buyerask <=0:
                 reward += -1
 
                 
         return reward
-#        return reward
 
     def reset(self):
-        self.state = (self.askingprice, self.buyeraskingprice, self.timeLeft, self.determination)
+        self.state = (self.askingprice, self.askingprice, self.timeLeft, self.determination)
         return np.array(self.state)
 
 #    def close(self):

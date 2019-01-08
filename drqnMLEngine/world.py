@@ -14,7 +14,6 @@ import gym
 from gym import spaces, logger
 from gym.utils import seeding
 import numpy as np
-import time
 from drqnMLEngine.sellerEnv import sellerEnv
 from drqnMLEngine.buyerEnv import buyerEnv
 
@@ -26,7 +25,6 @@ class world():
         self.askingPrice = 5
         self.minPrice = 3
         self.maxPrice = 6
-        self.buyeraskingPrice = 2
         self.nSellers = nSellers
         self.totalTime = maxSteps
         self.nSellers = nSellers
@@ -36,11 +34,10 @@ class world():
         self.sellerEnvs = []
 
         for i in range(self.nSellers):
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.minPrice, self.buyeraskingPrice))
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.minPrice))
             determination = 1 #random.randint(1,5)
-            self.buyerEnvs.append(buyerEnv(self.totalTime, self.buyeraskingPrice, self.askingPrice, self.maxPrice, determination))
+            self.buyerEnvs.append(buyerEnv(self.totalTime,  self.askingPrice, self.maxPrice, determination))
 
-        self.sellerStates = []
         self.buyerStates = []
         self.sellerRewards = []
         self.buyerRewards = []
@@ -63,20 +60,16 @@ class world():
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
             
-            if not done:
-                reward = self.sellerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-                self.sellerRewards[i] = reward
-                reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-                self.buyerRewards[i] = reward
+            reward = self.sellerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
+            self.sellerRewards[i] = reward
+            reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
+            self.buyerRewards[i] = reward
             
-            #for done case, only dealmakers for highest sellerask value is winner
-            else:
-                self.calcFinalReward()
-                
                 
         return self.sellerStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
         
+    #deprecated - unused
     def calcFinalReward(self):
         maxVal = 0 #max sellerask value
         valPos = None # position of the max sellerask value
@@ -102,18 +95,17 @@ class world():
         n1 = 50
         n2 = 100
         n3 = 1
-        n4 = 30
+        n4 = 49
         self.askingPrice = random.randint(n1,n2)
-        self.buyeraskingPrice = self.askingPrice - random.randint(n3,n1)
         self.minPrice = self.askingPrice - random.randint(n3,n4)
-        self.maxPrice = self.buyeraskingPrice + random.randint(n3,n4)
+        self.maxPrice = self.askingPrice + random.randint(n3,n4)
         
         self.sellerEnvs = []
         self.buyerEnvs = []
         for i in range(self.nSellers):
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.minPrice, self.buyeraskingPrice))
-            determination = random.randint(0,3)
-            self.buyerEnvs.append(buyerEnv(self.totalTime, self.buyeraskingPrice, self.askingPrice, self.maxPrice, determination))
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.minPrice))
+            determination = 0#random.randint(0,3)
+            self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, self.maxPrice, determination))
 
         self.sellerStates = []
         self.buyerStates = []

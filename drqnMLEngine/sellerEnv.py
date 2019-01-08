@@ -18,11 +18,10 @@ class sellerEnv(gym.Env):
     }
     AVAIL_TORQUE = [-1., 0., +1]
 
-    def __init__(self, totalTime, askingprice, minprice, buyeraskingprice):
+    def __init__(self, totalTime, askingprice, minprice):
         self.askingprice = askingprice
         self.minprice = minprice
         self.timeLeft = totalTime
-        self.buyeraskingprice = buyeraskingprice
 #        self.starttime = time.time()
 
         # self.action_space = spaces.Discrete(5) #less, more, the same
@@ -65,47 +64,31 @@ class sellerEnv(gym.Env):
         
         if done:
             if sellerask == buyerask:
+                
                 if sellerask < self.minprice:
-                    reward += 2/(self.minprice - sellerask)#-(self.minprice-sellerask)/self.minprice*0.1
-                elif sellerask >= self.askingprice:
-                    reward += 2*(sellerask-self.askingprice)#(sellerask - self.askingprice)/self.askingprice*0.1
-        #            print(reward)
+                    reward += -1 * abs(sellerask - self.minprice)
                 elif (sellerask >= self.minprice and sellerask < self.askingprice):
-                    reward += 2
-                    
+                    reward += abs(sellerask- self.minprice)
+                elif sellerask >= self.askingprice:
+                    reward += 2* abs(sellerask - self.askingprice)
+                
             else:
-                if sellerask < buyerask:
-                    reward += -2 * abs(buyerask - sellerask)
+                reward += -1 * abs(sellerask - self.minprice)
                     
-#                elif sellerask > buyerask:
-#                    reward += -1*abs(sellerask-buyerask)
                     
             if sellerask <=0:
                 reward += -2
                 
         else:
             
-#            if sellerask == buyerask:
-#                reward += 1  
-#            elif buyerask > sellerask:
-#                reward += -1 * abs(buyerask - sellerask)                    
-#            elif buyerask < sellerask:
-#                reward += -1*abs(sellerask-buyerask)
-                      
             if sellerask <=0:
                 reward += -1
-                
-
-#        if sellerask == buyerask:
-#            reward += 1
-   
-                
 
         return reward
         
 
     def reset(self):
-        self.state = [self.askingprice, self.buyeraskingprice, self.timeLeft]
+        self.state = [self.askingprice, self.askingprice, self.timeLeft]
         return self.state
 
 #    def close(self):

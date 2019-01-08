@@ -35,7 +35,7 @@ Num_testing  = 10000
 Num_update = 250
 Num_batch = 8
 Num_episode_plot = 30
-nSellers = 2
+nSellers = 1
 max_steps = 150
 
 # DRQN Parameters
@@ -44,8 +44,8 @@ step_size = 50
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/test_15/model-1000.meta')
-saver.restore(sess, '../output/test_15/model-1000')
+saver = tf.train.import_meta_graph('../output/model-500.meta')
+saver.restore(sess, '../output/model-500')
 
 sBA = dqrnSeller('SellerAgent')
 bB = []
