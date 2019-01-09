@@ -25,7 +25,7 @@ Num_episode_plot = 30
 # DRQN Parameters
 #step_size = 4
 lstm_size = 256
-flatten_size = 3*nSellers
+flatten_size = 4*nSellers
 
 class dqrnSeller(object):
     def __init__(self, scope):
@@ -54,7 +54,7 @@ class dqrnSeller(object):
 
         with tf.variable_scope(self.scope):
             # Input
-            self.x = tf.placeholder(tf.float32, shape = [None, 3*nSellers], name="x")
+            self.x = tf.placeholder(tf.float32, shape = [None, 4*nSellers], name="x")
     
             self.w_fc = self.weight_variable([lstm_size, Num_action])
             self.b_fc = self.bias_variable([Num_action])

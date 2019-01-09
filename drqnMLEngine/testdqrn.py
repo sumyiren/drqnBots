@@ -44,8 +44,8 @@ step_size = 50
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/model-500.meta')
-saver.restore(sess, '../output/model-500')
+saver = tf.train.import_meta_graph('../output/localtest5/model-2000.meta')
+saver.restore(sess, '../output/localtest5/model-2000')
 
 sBA = dqrnSeller('SellerAgent')
 bB = []
@@ -70,7 +70,7 @@ def flattenList(list):
     return flat_list
 
 def resetWorld(world):
-    obs_seller, obs_buyer = world.reset()
+    obs_seller, obs_buyer, maxprice, minprice = world.reset()
     obs_seller = np.stack(obs_seller)
     obs_seller = flattenList(obs_seller)
     obs_buyer = np.stack(obs_buyer)
