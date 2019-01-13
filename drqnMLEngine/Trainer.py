@@ -10,7 +10,7 @@ from drqnMLEngine.DRQNseller import dqrnSeller
 class Trainer(object):
 
     def __init__(self, args):
-        self.nSellers = 1
+        self.nSellers = 2
         self.reward_record = []
 
         self.n_agents = self.nSellers
@@ -52,11 +52,11 @@ class Trainer(object):
         return flat_list
 
     def resetWorld(self, world):
-        obs_seller, obs_buyer, maxprice, minprice = self.world.reset()
+        obs_seller, obs_buyer = self.world.reset()
         obs_seller = np.stack(obs_seller)
         obs_seller = self.flattenList(obs_seller)
         obs_buyer = np.stack(obs_buyer)
-        return obs_seller, obs_buyer, maxprice, minprice
+        return obs_seller, obs_buyer
 
 
     def performMiniBatching(self, sbB):
@@ -131,7 +131,7 @@ class Trainer(object):
 
     def startTraining(self):
         #initialize bots envs
-        obs_seller, obs_buyer,maxprice, minprice = self.resetWorld(world)
+        obs_seller, obs_buyer = self.resetWorld(world)
         for i in range(self.nSellers):
             self.bB.append(dqrnBuyer('BuyerAgent'+str(i)))
             self.bB[i].build_model()
@@ -281,15 +281,13 @@ class Trainer(object):
                 if self.count % 500 == 0 and self.bB[0].step > self.Num_start_training:
                     self.saveModel(self.count)
 
-                obs_seller, obs_buyer, maxprice, minprice = self.resetWorld(world)
+                obs_seller, obs_buyer = self.resetWorld(world)
 
                 if self.count % 1 == 0:
                     print('------------------------------------')
                     print('Initial Conditions:' + str(self.count))
                     print(obs_seller)
                     print(obs_buyer)
-                    print(maxprice)
-                    print(minprice)
                 self.count = self.count + 1
                 for i in range(self.nSellers):
 

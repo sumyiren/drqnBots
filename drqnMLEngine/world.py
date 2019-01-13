@@ -23,8 +23,6 @@ class world():
 
     def __init__(self, nSellers, maxSteps):
         self.askingPrice = 5
-        self.minPrice = 3
-        self.maxPrice = 6
         self.nSellers = nSellers
         self.totalTime = maxSteps
         self.nSellers = nSellers
@@ -34,8 +32,8 @@ class world():
         self.sellerEnvs = []
 
         for i in range(self.nSellers):
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.minPrice))
-            self.buyerEnvs.append(buyerEnv(self.totalTime,  self.askingPrice, self.maxPrice))
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, 0))
+            self.buyerEnvs.append(buyerEnv(self.totalTime,  self.askingPrice, 0))
 
         self.buyerStates = []
         self.sellerRewards = []
@@ -96,14 +94,13 @@ class world():
         n3 = 1
         n4 = 49
         self.askingPrice = random.randint(n1,n2)
-        self.minPrice = self.askingPrice - random.randint(n3,n4)
-        self.maxPrice = self.askingPrice + random.randint(n3,n4)
-        
+        minPrice = self.askingPrice - random.randint(n3,n4)
         self.sellerEnvs = []
         self.buyerEnvs = []
         for i in range(self.nSellers):
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.minPrice))
-            self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, self.maxPrice))
+            maxPrice = self.askingPrice + random.randint(n3,n4)
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, minPrice))
+            self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, maxPrice))
 
         self.sellerStates = []
         self.buyerStates = []
@@ -115,7 +112,7 @@ class world():
             self.sellerRewards.append(0)
             self.buyerRewards.append(0)
         
-        return self.sellerStates, self.buyerStates, self.maxPrice, self.minPrice
+        return self.sellerStates, self.buyerStates
         
 
     

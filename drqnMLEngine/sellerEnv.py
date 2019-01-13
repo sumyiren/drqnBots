@@ -80,7 +80,8 @@ class sellerEnv(gym.Env):
                 reward += -2
                 
         else:
-            
+            if sellerask < self.minprice:
+                reward += -1
             if sellerask <=0:
                 reward += -1
 

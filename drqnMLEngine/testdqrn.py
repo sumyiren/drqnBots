@@ -44,8 +44,8 @@ step_size = 50
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/localtest5/model-2000.meta')
-saver.restore(sess, '../output/localtest5/model-2000')
+saver = tf.train.import_meta_graph('../output/localtest7/model-2000.meta')
+saver.restore(sess, '../output/localtest7/model-2000')
 
 sBA = dqrnSeller('SellerAgent')
 bB = []
@@ -119,8 +119,8 @@ while step < max_steps:
     state = 'Testing'
     for i in range(nSellers):
         print('nSeller:'+str(i))
-        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]))
-
+        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]) + 'MaxPrice = ' + str(world.maxPrice) + 'MinPrice = ' + str(world.minPrice))
+        
     Q_value = sBA.output.eval(session=sess, feed_dict={sBA.x: sBA.observation_set, sBA.rnn_step_size: step_size})[0]
     for i in range(nSellers):
         #                sBA.action[i] = np.argmax(Q_value[i:i+3])

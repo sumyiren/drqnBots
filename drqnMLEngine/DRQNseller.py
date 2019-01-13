@@ -10,7 +10,7 @@ envs = []
 algorithm = 'DRQN'
 
 # Parameter setting 
-nSellers = 1
+nSellers = 2
 Num_action = 3*nSellers
 Gamma = 0.99
 Learning_rate = 0.00025

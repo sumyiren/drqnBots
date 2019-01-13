@@ -65,6 +65,8 @@ class buyerEnv(gym.Env):
                 
         else:
 #                
+            if buyerask > self.maxprice:
+                reward += -1
             if buyerask <=0:
                 reward += -1
 
