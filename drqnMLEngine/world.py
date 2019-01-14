@@ -53,7 +53,6 @@ class world():
             state, done = self.buyerEnvs[i].step(actions_buyer[i], self.sellerStates[i][0])
             self.buyerStates[i] = state
         
-        
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
             
@@ -61,7 +60,9 @@ class world():
             self.sellerRewards[i] = reward
             reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
             self.buyerRewards[i] = reward
-            
+
+        if done: 
+            self.calcFinalSellerReward()
                 
         return self.sellerStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
@@ -84,9 +85,13 @@ class world():
             self.sellerRewards[valPos] = reward
             reward = self.buyerEnvs[valPos].calcReward(self.buyerStates[valPos][0], self.buyerStates[valPos][1], True)
             self.buyerRewards[valPos] = reward
-            
-#        print(self.sellerRewards, self.buyerRewards)
 
+    def calcFinalSellerReward(self):
+        maxSellerReward = max(self.sellerRewards)
+        for i in range(len(self.sellerRewards)):
+            self.sellerRewards[i] = maxSellerReward
+
+            
         
     def reset(self):
         n1 = 50
