@@ -1,0 +1,573 @@
+20/7/2018
+
+new project negotiation AI - the future marketplace?
+
+export PATH=~/anaconda3/bin:$PATH
+
+
+python train.py \
+  --data data/negotiate \
+  --cuda \
+  --bsz 16 \
+  --clip 0.5 \
+  --decay_every 1 \
+  --decay_rate 5.0 \
+  --dropout 0.5 \
+  --init_range 0.1 \
+  --lr 1 \
+  --max_epoch 30 \
+  --min_lr 0.01 \
+  --momentum 0.1 \
+  --nembed_ctx 64 \
+  --nembed_word 256 \
+  --nesterov \
+  --nhid_attn 256 \
+  --nhid_ctx 64 \
+  --nhid_lang 128 \
+  --nhid_sel 256 \
+  --nhid_strat 128 \
+  --sel_weight 0.5 \
+  --model_file sv_model.th
+
+python reinforce.py \
+  --data data/negotiate \
+  --cuda \
+  --bsz 16 \
+  --clip 1 \
+  --context_file data/negotiate/selfplay.txt \
+  --eps 0.0 \
+  --gamma 0.95 \
+  --lr 0.5 \
+  --momentum 0.1 \
+  --nepoch 4 \
+  --nesterov \
+  --ref_text data/negotiate/train.txt \
+  --rl_clip 1 \
+  --rl_lr 0.2 \
+  --score_threshold 6 \
+  --sv_train_freq 4 \
+  --temperature 0.5 \
+  --alice_model sv_model.th \
+  --bob_model sv_model.th \
+  --output_model_file rl_model.th
+
+
+python selfplay.py \
+  --alice_model_file rl_model.th \
+  --bob_model_file sv_model.th \
+  --context_file data/negotiate/selfplay.txt \
+  --temperature 0.5 \
+  --log_file selfplay.log \
+  --ref_text data/negotiate/train.txt
+
+
+
+
+
+  wget https://repo.continuum.io/archive/Anaconda3-5.2.0-Linux-x86_64.sh
+
+
+ssh yrs113@ae-jnr14-gpu.ae.ic.ac.uk
+
+
+23/7/2018
+
+so unfocussed...what the heck am i building?
+
+the idea is a machine learnt negotiation system...which involves a seller and a buyer competing to get the best price possible for a certain product. 
+
+something like an 'AI-negotiated market' for all types of goods. 
+
+one condition is not being allowed to let buyers see the product...for example a car..needs a viewing...such things will affect negotiation but are unable to be inputed into the ai system for now.
+
+gona look at the ebay industry...i.e ...ppl selling second hand goods, via postal (gumtree goods doesnt work).
+
+the ai nego challenge, is now to convert it from a multi-issue bargaining task, into a buyer-seller price agreement scenario
+
+
+24/7/2018
+
+maybe a simple price-based offering instead of full on language communication
+
+a reinforcement learner - adversarial
+
+the seller constraints: lowest offering price, optimum offering price, deadline, number of potential buyers
+
+the buyer constraints: asking price, lowest asking price, how much the buyer want item, 
+
+
+quite excited by this....we start work in the morning.. a complete rewrite
+
+
+25/7/2018
+
+install 3.5 instead of 3.6 for anaconda to solve pandas core issue
+
+
+
+26/7/2018
+
+keep checking this: https://github.com/openai/baselines/issues/162
+
+cant build separate seller buyer bots...instead gona train them togehter
+
+and add and extract information as it goes
+
+need to train independent bots? to ensure easier insertion later?
+
+
+screw this moving to pytorch
+
+
+27/7/2018
+
+2-day break
+
+
+1/8/2018
+
+using maddpg to teach cooperation
+
+
+2/8/2018
+
+brunei to do list:
+meet shing - done, amin - done, kb peeps - half, pei and frens - done, jh - done, kongtwins and zak - done, jia-done, dayat - done, edwin and gang, ying - done!
+shahbandar - done
+tungku beach - done
+empire - done
+movies - done
+jolibee - done
+labuan /miri?
+kaizen - done
+little audreys - done
+dota - done
+penyet - done
+st andrews?
+jiken rice - done
+
+7/8/2018
+
+https://github.com/MorvanZhou/pytorch-A3C/blob/master/discrete_A3C.py
+back homeee\
+
+
+13/8/2018
+
+same robot for seller
+multiple buyerbots
+
+
+15/8/2018
+
+argument is that multiple seller bots required as it begins with high value for each buyer bot
+
+but how to make the seller bots communicate when they have leverage?
+
+
+1/9/2018
+
+got the cuda to work...back to new laptop
+
+export PATH=/usr/local/cuda-9.2/bin${PATH:+:${PATH}}
+
+
+
+11/9/2018
+
+rocking chair test: what have you built in ur 20s
+
+
+rethink reward structure
+
+
+
+15/8/2018
+
+super good explainer forward and backward:
+https://medium.com/datathings/neural-networks-and-backpropagation-explained-in-a-simple-way-f540a3611f5e
+
+
+
+16/8/2018
+
+th.save and th.load so easy
+
+have to redesign so that max number of sellers chosen....then randominity used..test this
+
+
+19/9/2018
+
+redesigned reward scheme again this morning
+
+
+
+22/9/2018
+
+sellerask buyerask doesnt converge...cant understand why
+
+
+steam: r55283
+
+
+
+23/9/2018
+
+convergence acheived...however...have to redesign determination as it seems to screw with things
+
+
+
+29/9/2018
+
+been so long..back to work
+
+rebuild determination
+
+sometimes sellerbot or buyerbot takes over...competition disappears and one takes control
+
+
+30/9/2018
+
+buyer is very weak...keep giving in to the seller resulting in large negative returns
+
+
+going to experiement with another version of maddpg-pytorch:
+https://github.com/shariqiqbal2810/maddpg-pytorch/blob/master/algorithms/maddpg.py
+
+
+dont manual random..depend on the sample noise randomness to fix it - for actor critic
+
+
+
+03/10/2018
+
+what i see is if the buyer is overpowered early (when nsellers >4), it becomes a stubborn addict, i.e
+unwilling to compromise, detrimenting the maddpg sellers early
+
+what to do what to do?
+
+
+
+7/10/2018
+
+create a reward structure that can produce compromise, competition and cooperation
+
+
+right now saving the most competitive ones
+need a balance to save both the compeititve and compromising ones
+
+build cooperation tomoro
+
+
+
+10/10/2018
+
+building determination..more determination should result in higher vals?
+
+
+14/10/2018
+
+confused..determination is not pushing prices up as expected..why why why??
+
+
+17/10/2018
+
+logs:
+
+3 nsellers, strongest copied over, 50-100, 20100 epi, 
+
+remove copied over, build determination individually, determination = 1 very high for some reason
+
+
+21/10/2018
+
+changed to -2* for buyercase...does not work well, have to redefine system to charge higher determination more
+2* 2**self.determination
+
+real heroes of telemark
+
+
+reward += 2**self.determination in both
+
+
+no buyerincrementation rewards, seller incentivised to make deal, dqnbuyer beefed up
+
+
+24/10/2018
+
+model learn very slow
+switch to ddqn
+
+
+27/10/2018
+
+need a complete rewrite...far too muddled right now..not shortcuts!
+
+a3c might not work...requires parallelly hitting the environment
+
+try using ddpg: https://github.com/ghliu/pytorch-ddpg
+
+
+30/10/2018
+
+should be some log function
+
+
+gona try ddqn isntead...ddpg has failed me: https://flyyufelix.github.io/2017/10/12/dqn-vs-pg.html
+
+
+had a look at office...at learning multiagent dqns...gona try that
+
+https://arxiv.org/pdf/1605.06676.pdf
+
+https://gist.github.com/spro/ef26915065225df65c1187562eca7ec4
+
+
+1/11/2018
+
+attempting quality of ppo
+https://github.com/ikostrikov/pytorch-a2c-ppo-acktr - nvm
+
+
+interesting: https://github.com/AndersonJo/dqn-pytorch/blob/master/dqn.py
+
+
+2/11/2018
+
+research at work today: 
+maybe use a dqrn (since it requires several iterations for batching) for sellerbots
+and use dqn for buyerbots
+
+and then use dqrn for buyerbots trained off sellerbots
+
+dqrn built off: https://github.com/Kyushik/GYM_DRL/blob/master/2_CartPole_DRQN.py
+have to convert to pytorch
+
+
+17/11/2018
+
+
+ssh 2nd anser savior
+https://askubuntu.com/questions/762541/ubuntu-16-04-ssh-sign-and-send-pubkey-signing-failed-agent-refused-operation
+
+
+
+cuda https://askubuntu.com/questions/799184/how-can-i-install-cuda-on-ubuntu-16-04
+
+
+export PATH=/usr/local/cuda-10.0/bin${PATH:+:${PATH}}
+
+
+cuda bossss:
+export PATH=${PATH}:/usr/local/cuda-9.0/bin
+export CUDA_HOME=${CUDA_HOME}:/usr/local/cuda:/usr/local/cuda-9.0
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-9.0/lib64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
+
+in ~/.profile
+
+
+
+
+9/12/2018
+
+export GOOGLE_APPLICATION_CREDENTIALS="/home/sumyiren/.ssh/NegoAI-5d051e17bbb4.json"
+
+gcloud alpha cloud-shell ssh
+
+source ~/.bashrc
+
+
+13/12/2018
+https://stackoverflow.com/questions/41607144/loading-two-models-from-saver-in-the-same-tensorflow-session
+
+back to this question one seller many buyers - NG001
+
+
+16/12/2018
+
+NG002 implement save tomorrow
+
+
+17/12/2018
+
+gcloud ml-engine jobs submit training $JOB_NAME --module-name drqnMLEngine.task --job-dir $OUTPUT_PATH --package-path drqnMLEngine --region $REGION
+
+JOB_NAME=test8
+BUCKET_NAME=negoai204-mlengine
+REGION=europe-west1
+OUTPUT_PATH=gs://$BUCKET_NAME/output
+
+NG 003 create test tester
+
+
+20/12/2018
+OUTPUT_PATH=./output
+gcloud ml-engine local train --module-name drqnMLEngine.task --job-dir $OUTPUT_PATH --config config.yaml
+
+
+
+31/12/2018
+
+NG 004 auto tester and manual tester
+
+
+JOB_NAME=test16_gpu
+BUCKET_NAME=negoai204-mlengine
+REGION=europe-west1
+OUTPUT_PATH=gs://$BUCKET_NAME/$JOB_NAME/output
+
+
+gcloud ml-engine jobs submit training $JOB_NAME --module-name drqnMLEngine.task --job-dir $OUTPUT_PATH --package-path drqnMLEngine --region $REGION --config config.yaml
+
+
+
+1/1/2019
+
+hny to me
+
+trained model doesnt seem to exhibit the characteristics as during training...very weird
+
+been on this problem the whole day....no progress
+
+
+2/1/2019
+
+gsutil cp -r $OUTPUT_PATH ./
+
+
+[NG005] epsilon error, it was all random, also reduced step size to 25 (might change this back later on, this quickens training)
+
+txqr so cool
+
+
+3/1/2019
+
+test15 is wrong - epsilon = 0
+
+
+4/1/2019
+https://stackoverflow.com/questions/51306862/how-to-use-tensorflow-gpu
+https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html
+
+a restart helps :)
+
+
+epsilon fixed to 10% random i.e quite greedy
+
+
+python task.py --job-dir $OUTPUT_PATH
+
+
+[NG006] radical solution, a randomed epsilon episode, not step
+
+
+
+5/1/2019
+
+[NG007] redesign the reward structure, - for the first case to make a deal, no matter how bad it is
+
+deals being made, but sometimes seller over powers buyer and vice versa
+
+
+6/1/2019
+
+seller overpowered, seems to have first move advantage to pull it up, question is why localtest2
+
+determination set to 0 for localtest3
+
+
+7/1/2019
+
+outbounds punished only localtest4
+
+
+localtest5 more explorative 0.25 eps
+
+
+8/1/2019
+
+rethink the price structure [NG008]
+
+             80                             100                             110
+|------------|---------------|---------------|---------------|---------------|---------------|---------------|
+          minPrice                      askingPrice                      maxPrice(buyer)
+
+
+
+9/1/2019
+
+
+[NG009] buyer should not his max price and seller should know its min price, remove determination for now
+
+10/1/2019
+localtest6 9/10 model
+
+need to refactor to make maxPrice part of buyerproperties
+train on two or more
+write vc thing
+
+
+
+jk not good enough, not boundaried
+
+localtest7 alot of boundary conditions added, maxprice refactor [NG010]
+
+
+
+13/1/2019
+
+when there are two players, only the highest reward should be honored....right? for seller
+
+[NG011] last step seller reward shared highest
+nvm
+
+OUTPUT=./output
+python task.py --job-dir=$OUTPUT
+
+
+
+
+try out dpiqn model for teamwork...stil unconvinced at the teamwork of drqn unforutnatley
+
+https://github.com/williamd4112/infer-policy-features
+
+
+14/1/2019
+
+many seller method problem, cant tell which is the first or second state
+
+but very scalable - can add parts
+
+localtest8 - first two nSeller test - 3500 itrs
+
+[NG011] last step seller reward shared highest - localtest9
+i.e a no deal is possible
+crediting bad behavior though??
+
+
+Team spirit ranges from 0 to 1, putting a weight on how much each of OpenAI Five’s heroes should care about its individual reward function versus the average of the team’s reward functions. We anneal its value from 0 to 1 over training.
+
+
+[NG012] Separating into multiple sellers (again)
+- separate into a current seller first two
+- remove repeating information from state sent
+localtest10
+
+
+
+17/1/2019
+
+dont even have an idea name LOl
+
+
+Idea Name:
+
+What problem are you solving:
+When shopping online on Amazon, most goods are sold at a fixed price. Sellers and buyers are unable to negotiate on an optimum price for a product based on its demand. In an ideal negotiation scenario, high demand (many buyers) for a product would allow sellers to reach a higher price for its product, while low demand (few buyers) for a product would allow buyers to get a bargain for the product. One reasoning why this is not be done is because, nobody wants to stare at a computer screen for hours negotiating on these price points. Our solution is as follows.
+
+What is your solution to this problem:
+
+
+
+Give us more detail what you have done:
