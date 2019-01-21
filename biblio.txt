@@ -412,7 +412,7 @@ gcloud ml-engine local train --module-name drqnMLEngine.task --job-dir $OUTPUT_P
 NG 004 auto tester and manual tester
 
 
-JOB_NAME=test16_gpu
+JOB_NAME=test18_gpu
 BUCKET_NAME=negoai204-mlengine
 REGION=europe-west1
 OUTPUT_PATH=gs://$BUCKET_NAME/$JOB_NAME/output
@@ -561,13 +561,41 @@ localtest10
 dont even have an idea name LOl
 
 
-Idea Name:
+Idea Name: Tsukiji-AI
 
 What problem are you solving:
 When shopping online on Amazon, most goods are sold at a fixed price. Sellers and buyers are unable to negotiate on an optimum price for a product based on its demand. In an ideal negotiation scenario, high demand (many buyers) for a product would allow sellers to reach a higher price for its product, while low demand (few buyers) for a product would allow buyers to get a bargain for the product. One reasoning why this is not be done is because, nobody wants to stare at a computer screen for hours negotiating on these price points. Our solution is as follows.
 
 What is your solution to this problem:
-
+The solution involves training two different bots: sellerbots and buyerbots. A seller is given a sellerbot while buyers are each given a buyerbot. Sellerbots and buyerbots will then compete and negotiate in order to compromise on an optimum price. Based on parameters (i.e how much a buyer wants a product, how far a buyer is willing to go, how stingy a seller is), the bots are customized to suit the seller and buyer and will negotiate accordingly. What we envision is something like ebay, but which is powered by automatic negotiating bots.
 
 
 Give us more detail what you have done:
+
+When I say 'negotiating', I do not mean give the bots the ability to communicate via natural language (this is an interesting problem, but a bit out of scope). Instead we gave bots the ability to fluctuate the price they are willing to buy/sell.  Over set a time limit, these bots display an ability to 'fake' a high/low price, but slowly compromise towards an agreed price. 
+
+These bots are trained adversarially using reinforcement learning. The whole training process is performed on cloud (Google ML-Engine, but I see that AWS is sponsoring, so definitely open to migrating to that :)). 
+
+The challenge now is to train larger models, to build a viable business plan for this project, and to build a front-end to get user feedback.
+
+
+19/1/2019
+
+possible names: juke, runding, soyoro, barkeot, bonzuu, stock, name for the trader will be name of company
+
+start with: M, P, negotiate, market, arke, reinforcement, adversary
+
+broker
+
+                  RL
+
+20/1/2019
+
+learn from experience, reinformcent learning, market seller buyer, observation, reward,
+
+BYRL??   barket omera 
+
+tsukiji-ai.com, seo nightmare :(
+
+
+model is stable, I think, time to train larger model? 3nsellers?
