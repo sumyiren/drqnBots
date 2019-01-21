@@ -21,7 +21,7 @@ import random
 
 class world():
 
-    def __init__(self, nSellers, maxSteps):
+    def __init__(self, nSellers, maxSteps, teamSpirit):
         self.askingPrice = 5
         self.nSellers = nSellers
         self.totalTime = maxSteps
@@ -30,15 +30,28 @@ class world():
         self.action_space = spaces.Discrete(3) #less, more, the same
         self.buyerEnvs = []
         self.sellerEnvs = []
+        self.teamSpirit = teamSpirit
 
         for i in range(self.nSellers):
             self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, 0))
             self.buyerEnvs.append(buyerEnv(self.totalTime,  self.askingPrice, 0))
 
-        self.buyerStates = []
-        self.sellerRewards = []
-        self.buyerRewards = []
-
+    def flattenList(self, list):
+        flat_list = [item for sublist in list for item in sublist]
+        return flat_list
+        
+    def getSellerStackStates(self):
+        sellerStackStates = []
+        for i in range(self.nSellers):
+            temp = []
+            temp.extend(self.sellerStates[i][:])
+            for j in range(self.nSellers):
+                if i != j:
+                    temp.extend(self.sellerStates[j][:])
+            sellerStackStates.append(temp)
+        return sellerStackStates
+            
+        
 
     def step(self, actions_seller, actions_buyer):
         
@@ -47,7 +60,7 @@ class world():
             state, done = self.sellerEnvs[i].step(actions_seller[i], self.buyerStates[i][1])
             self.sellerStates[i] = state
 
-        
+        self.sellerStackStates = self.getSellerStackStates()
         #do buyer step
         for i in range(self.nSellers):
             state, done = self.buyerEnvs[i].step(actions_buyer[i], self.sellerStates[i][0])
@@ -62,9 +75,9 @@ class world():
             self.buyerRewards[i] = reward
 
         if done: 
-            self.calcFinalSellerReward()
+            self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
                 
-        return self.sellerStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
+        return self.sellerStackStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
         
     #deprecated - unused
@@ -86,12 +99,12 @@ class world():
             reward = self.buyerEnvs[valPos].calcReward(self.buyerStates[valPos][0], self.buyerStates[valPos][1], True)
             self.buyerRewards[valPos] = reward
 
-    def calcFinalSellerReward(self):
-        maxSellerReward = max(self.sellerRewards)
-        for i in range(len(self.sellerRewards)):
-            self.sellerRewards[i] = maxSellerReward
 
-            
+    def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
+        avgSellerReward = np.average(sellerReward)
+        for i in range(len(sellerReward)):
+            sellerReward[i] = self.teamSpirit*avgSellerReward + (1-self.teamSpirit)*sellerReward[i]
+        return sellerReward
         
     def reset(self):
         n1 = 50
@@ -108,6 +121,7 @@ class world():
             self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, maxPrice))
 
         self.sellerStates = []
+        self.sellerStackStates = []
         self.buyerStates = []
         self.sellerRewards = []
         self.buyerRewards = []
@@ -117,7 +131,9 @@ class world():
             self.sellerRewards.append(0)
             self.buyerRewards.append(0)
         
-        return self.sellerStates, self.buyerStates
+        self.sellerStackStates = self.getSellerStackStates()
+        
+        return self.sellerStackStates, self.buyerStates
         
 
     

@@ -35,26 +35,22 @@ Num_testing  = 10000
 Num_update = 250
 Num_batch = 8
 Num_episode_plot = 30
-nSellers = 1
+nSellers = 2
 max_steps = 150
-
+teamSpirit = 0.5
 # DRQN Parameters
 step_size = 50
 
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/localtest7/model-2000.meta')
-saver.restore(sess, '../output/localtest7/model-2000')
+saver = tf.train.import_meta_graph('../output/localtest10/model-2500.meta')
+saver.restore(sess, '../output/localtest10/model-2500')
 
-sBA = dqrnSeller('SellerAgent')
+sB = []
 bB = []
 
 graph = tf.get_default_graph()
-sBA.x = graph.get_tensor_by_name("SellerAgent/x:0")
-sBA.rnn_batch_size = graph.get_tensor_by_name("SellerAgent/rnn_batch_size:0")
-sBA.rnn_step_size  = graph.get_tensor_by_name("SellerAgent/rnn_step_size:0")
-sBA.output = graph.get_tensor_by_name("SellerAgent/op_to_restore:0")
 
 for i in range(nSellers):
     j = i
@@ -64,45 +60,46 @@ for i in range(nSellers):
     bB[i].rnn_step_size  = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_step_size:0')
     bB[i].output = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/op_to_restore:0')
 
+    sB.append(dqrnSeller('SellerAgent'+str(j)))
+    sB[i].x = graph.get_tensor_by_name('SellerAgent'+str(j)+'/x:0')
+    sB[i].rnn_batch_size = graph.get_tensor_by_name('SellerAgent'+str(j)+'/rnn_batch_size:0')
+    sB[i].rnn_step_size  = graph.get_tensor_by_name('SellerAgent'+str(j)+'/rnn_step_size:0')
+    sB[i].output = graph.get_tensor_by_name('SellerAgent'+str(j)+'/op_to_restore:0')
+
 
 def flattenList(list):
     flat_list = [item for sublist in list for item in sublist]
     return flat_list
 
 def resetWorld(world):
-    obs_seller, obs_buyer, maxprice, minprice = world.reset()
+    obs_seller, obs_buyer = world.reset()
     obs_seller = np.stack(obs_seller)
-    obs_seller = flattenList(obs_seller)
     obs_buyer = np.stack(obs_buyer)
     return obs_seller, obs_buyer
     
     
     
-world = world(nSellers, max_steps)
+world = world(nSellers, max_steps, teamSpirit)
 obs_seller, obs_buyer = resetWorld(world)
-sBA.observation = obs_seller
-sBA.observation_set = []
-for i in range(step_size):
-    sBA.observation_set.append(sBA.observation)
     
 for i in range(nSellers):
     bB[i].observation = obs_buyer[i]
     bB[i].observation_set = []
     for j in range(step_size):
         bB[i].observation_set.append(bB[i].observation)
+    sB[i].observation = obs_seller[i]
+    sB[i].observation_set = []
+    for j in range(step_size):
+        sB[i].observation_set.append(sB[i].observation)
     
 #sellers
-Q_value = sBA.output.eval(session=sess, feed_dict={sBA.x: sBA.observation_set, sBA.rnn_step_size: step_size})[0]
-sBA.action = []
 actions_seller = [world.action_space.sample()]*nSellers
 for i in range(nSellers):
-    #                sBA.action[i] = np.argmax(Q_value[i:i+3])
-    Q_value_pseudo = Q_value[i:i+3]
-    sBA_pseudo_action = np.zeros([Num_action])
-    sBA_pseudo_action[np.argmax(Q_value_pseudo)] = 1
-    sBA.action.extend(sBA_pseudo_action)
-    action_step = np.argmax(sBA_pseudo_action)
-    actions_seller[i] = action_step   
+    Q_value = sB[i].output.eval(session=sess, feed_dict={sB[i].x: sB[i].observation_set, sB[i].rnn_step_size: step_size})[0]
+    sB[i].action = np.zeros([Num_action])
+    sB[i].action[np.argmax(Q_value)] = 1
+    action_step = np.argmax(sB[i].action)
+    actions_seller[i] = action_step
 
 #buyers
 actions_buyer = [world.action_space.sample()]*nSellers
@@ -119,16 +116,16 @@ while step < max_steps:
     state = 'Testing'
     for i in range(nSellers):
         print('nSeller:'+str(i))
-        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]) + 'MaxPrice = ' + str(world.maxPrice) + 'MinPrice = ' + str(world.minPrice))
+#        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]))
+        print('SellerAsk = ' +str(obs_seller[i])+ 'BuyerAsk = ' + str(obs_buyer[i]))
         
-    Q_value = sBA.output.eval(session=sess, feed_dict={sBA.x: sBA.observation_set, sBA.rnn_step_size: step_size})[0]
+    #sellers
+    actions_seller = [world.action_space.sample()]*nSellers
     for i in range(nSellers):
-        #                sBA.action[i] = np.argmax(Q_value[i:i+3])
-        Q_value_pseudo = Q_value[i:i+3]
-        sBA_pseudo_action = np.zeros([Num_action])
-        sBA_pseudo_action[np.argmax(Q_value_pseudo)] = 1
-        sBA.action.extend(sBA_pseudo_action)
-        action_step = np.argmax(sBA_pseudo_action)
+        Q_value = sB[i].output.eval(session=sess, feed_dict={sB[i].x: sB[i].observation_set, sB[i].rnn_step_size: step_size})[0]
+        sB[i].action = np.zeros([Num_action])
+        sB[i].action[np.argmax(Q_value)] = 1
+        action_step = np.argmax(sB[i].action)
         actions_seller[i] = action_step
 
     #buyers
@@ -142,21 +139,20 @@ while step < max_steps:
     
     obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
             = world.step(actions_seller, actions_buyer)   
-    obs_seller_ = flattenList(obs_seller_)
     
     for i in range(nSellers):
         bB[i].observation = obs_buyer_[i]
         bB[i].observation_set.append(bB[i].observation)
         if len(bB[i].observation_set) > step_size:
             del bB[i].observation_set[0]
-    
-    sBA.observation = obs_seller_
-    sBA.observation_set.append(sBA.observation)
-    if len(sBA.observation_set) > step_size:
-        del sBA.observation_set[0]
+        sB[i].observation = obs_seller_[i]
+        sB[i].observation_set.append(sB[i].observation)
+        if len(sB[i].observation_set) > step_size:
+            del sB[i].observation_set[0]
     step = step+1
     
     obs_buyer = obs_buyer_
+    obs_seller = obs_seller_
 
     
     

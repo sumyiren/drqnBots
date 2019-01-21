@@ -11,7 +11,7 @@ algorithm = 'DRQN'
 
 # Parameter setting 
 nSellers = 2
-Num_action = 3*nSellers
+Num_action = 3
 Gamma = 0.99
 Learning_rate = 0.00025
 
