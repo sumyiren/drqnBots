@@ -48,6 +48,33 @@ class dqrnBuyer(object):
         self.episode = 0
         self.Num_batch = 8
         
+    
+    def restore_model(self, graph, j):
+        with tf.variable_scope(self.scope):
+            self.x = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/x:0')
+            self.w_fc = self.weight_variable([lstm_size, Num_action])
+            self.b_fc = self.bias_variable([Num_action])
+            self.rnn_batch_size = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_batch_size:0')
+            self.rnn_step_size  = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_step_size:0')
+            self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , flatten_size])
+            with tf.variable_scope('network'):
+                self.cell = tf.contrib.rnn.BasicLSTMCell(num_units = lstm_size, state_is_tuple = True)
+                self.rnn_out, self.rnn_state = tf.nn.dynamic_rnn(inputs = self.x_rnn, cell = self.cell, dtype = tf.float32)
+                
+            # Vectorization
+            self.rnn_out = self.rnn_out[:, -1, :]
+            self.rnn_out = tf.reshape(self.rnn_out, shape = [-1 , lstm_size])    
+                
+            self.output = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/op_to_restore:0')
+            # Loss function and Train 
+            self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action])
+            self.y_prediction = tf.placeholder(tf.float32, shape = [None])
+    
+            self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
+            self.Loss = tf.reduce_mean(tf.square(self.y_prediction - self.y_target))
+            with tf.variable_scope('restore'):
+                self.train_step = tf.train.AdamOptimizer(Learning_rate).minimize(self.Loss)
+        
     def build_model(self):
         with tf.variable_scope(self.scope):
 

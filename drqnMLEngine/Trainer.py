@@ -10,7 +10,7 @@ from drqnMLEngine.DRQNseller import dqrnSeller
 class Trainer(object):
 
     def __init__(self, args):
-        self.nSellers = 2
+        self.nSellers = 3
         self.reward_record = []
 
         self.n_agents = self.nSellers
@@ -255,7 +255,7 @@ class Trainer(object):
                 # # Run Saver here
                 # if self.bB[0].step > self.Num_start_training:
 
-                if self.count % 500 == 0 and self.bB[0].step > self.Num_start_training:
+                if self.count % 1 == 0 and self.bB[0].step > self.Num_start_training:
                     self.saveModel(self.count)
 
                 obs_seller, obs_buyer = self.resetWorld(world)

@@ -15,7 +15,7 @@
 import argparse
 import tensorflow as tf
 import os
-from drqnMLEngine.Trainer import Trainer
+from drqnMLEngine.continueTrainer import continueTrainer
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -38,6 +38,6 @@ if __name__ == '__main__':
         tf.logging.__dict__[args.verbosity] / 10)
 
     # Run the training job
-    trainer = Trainer(args)
+    trainer = continueTrainer(args)
     trainer.startTraining()
 
