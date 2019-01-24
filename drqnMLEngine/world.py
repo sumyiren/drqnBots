@@ -22,7 +22,7 @@ import random
 class world():
 
     def __init__(self, nSellers, maxSteps, teamSpirit):
-        self.askingPrice = 5
+        self.askingPrice = 5.0
         self.nSellers = nSellers
         self.totalTime = maxSteps
         self.nSellers = nSellers
@@ -107,10 +107,10 @@ class world():
         return sellerReward
         
     def reset(self):
-        n1 = 50
-        n2 = 100
-        n3 = 1
-        n4 = 49
+        n1 = 50.0
+        n2 = 100.0
+        n3 = 1.0
+        n4 = 49.0
         self.askingPrice = random.randint(n1,n2)
         minPrice = self.askingPrice - random.randint(n3,n4)
         self.sellerEnvs = []

@@ -30,7 +30,7 @@ class Trainer(object):
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 2000000
-        self.Num_start_training = 100000
+        self.Num_start_training = 10000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters

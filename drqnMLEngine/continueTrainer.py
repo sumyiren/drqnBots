@@ -124,38 +124,29 @@ class continueTrainer(object):
         #initialize bots envs
         obs_seller, obs_buyer = self.resetWorld(world)
         
+        for i in range(self.nSellers):
+            self.bB.append(dqrnBuyer('BuyerAgent'+str(i)))
+            self.bB[i].build_model()
+
+            self.bB[i].observation = obs_buyer[i]
+            self.bB[i].action = self.world.action_space.sample()
+
+            self.sB.append(dqrnSeller('SellerAgent'+str(i)))
+            self.sB[i].build_model()
+
+            self.sB[i].observation = obs_seller[i]
+            self.sB[i].action = self.world.action_space.sample()
         
-        self.sess=tf.Session()
 #        vl = [v for v in tf.global_variables() if "Adam" not in v.name]
-#        saver = tf.train.Saver(var_list=vl)
-#        saver = tf.train.Saver(var_list=lst_vars)
-#        saver = tf.train.import_meta_graph('./output/test_18gpu/model-3500.meta')
-        saver.restore(self.sess, './output/test_18gpu/model-3500')
-        with self.sess.as_default():
-        #First let's load meta graph and restore weights
-            graph = tf.get_default_graph()
-            for i in range(self.nSellers):
-                j=i
-                self.bB.append(dqrnBuyer('BuyerAgent'+str(i)))
-                self.bB[i].restore_model(graph, j)
-
-                self.bB[i].observation = obs_buyer[i]
-                self.bB[i].action = self.world.action_space.sample()
-    
-                self.sB.append(dqrnSeller('SellerAgent'+str(i)))
-                self.sB[i].restore_model(graph , j)
-
-                self.sB[i].observation = obs_seller[i]
-                self.sB[i].action = self.world.action_space.sample()
+#        saver = tf.train.Saver()
         
-
-            #run session
-    #        config = tf.ConfigProto(log_device_placement=True)
-    #        config.gpu_options.allow_growth = True
-    #        self.sess = tf.InteractiveSession(config=config)
+        with tf.Session() as self.sess:
+            saver = tf.train.import_meta_graph('./output/test_18gpu/model-3500.meta')
+            saver.restore(self.sess, './output/test_18gpu/model-3500')
+            
             init = tf.global_variables_initializer()
             self.sess.run(init)
-    
+        
             #actions bundled up for world
             actions_buyer = [0]*self.nSellers
             actions_seller = [0]*self.nSellers
