@@ -57,14 +57,21 @@ class world():
         
         #do seller step first
         for i in range(self.nSellers):
-            state, done = self.sellerEnvs[i].step(actions_seller[i], self.buyerStates[i][1])
+            state, done = self.sellerEnvs[i].step(actions_seller[i], actions_buyer[i])
             self.sellerStates[i] = state
 
         self.sellerStackStates = self.getSellerStackStates()
         #do buyer step
         for i in range(self.nSellers):
-            state, done = self.buyerEnvs[i].step(actions_buyer[i], self.sellerStates[i][0])
+            state, done = self.buyerEnvs[i].step(actions_buyer[i], actions_seller[i])
             self.buyerStates[i] = state
+
+
+        print('----------------------')
+        print('buyerstates')
+        print(self.buyerStates)
+        print('sellerstates')
+        print(self.sellerStates)
         
         #calc rewards for seller and buyer
         for i in range(self.nSellers):

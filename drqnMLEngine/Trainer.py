@@ -20,7 +20,7 @@ class Trainer(object):
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
         self.max_steps = 150
-        self.n_episode = 4050
+        self.n_episode = 5050
 
         # Parameter setting
         self.Num_action = 3
@@ -30,12 +30,12 @@ class Trainer(object):
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 2000000
-        self.Num_start_training = 10000
+        self.Num_start_training = 100000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
         self.step_size = 50
-        self.teamSpirit = 0.5
+        self.teamSpirit = 0.3
         self.world = world(self.nSellers, self.max_steps, self.teamSpirit)
         self.bB = []
         self.sB = []
@@ -96,6 +96,8 @@ class Trainer(object):
 
 
     def saveModel(self, step):
+        if self.save_folder == None:
+            self.save_folder = './output'
         print('SAVED MODEL')
         self.saver = tf.train.Saver()
         self.saver.save(self.sess, self.save_folder+'/model', global_step=step)
@@ -255,7 +257,7 @@ class Trainer(object):
                 # # Run Saver here
                 # if self.bB[0].step > self.Num_start_training:
 
-                if self.count % 1 == 0 and self.bB[0].step > self.Num_start_training:
+                if self.count % 500 == 0 and self.bB[0].step > self.Num_start_training:
                     self.saveModel(self.count)
 
                 obs_seller, obs_buyer = self.resetWorld(world)

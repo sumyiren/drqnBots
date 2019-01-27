@@ -38,16 +38,17 @@ class sellerEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def step(self, action, buyerask_new):
+    def step(self, action_seller, action_buyer):
         state = self.state
         sellerask, buyerask, minprice, timeLeft = state
-        if action != None:
-            plusminus = self.AVAIL_TORQUE[action]
+        if action_seller != None:
+            plusminus_seller = self.AVAIL_TORQUE[action_seller]
+            plusminus_buyer = self.AVAIL_TORQUE[action_buyer]
         else:
-            plusminus = 0
+            plusminus_seller = 0
 
-        sellerask += plusminus
-        buyerask = buyerask_new
+        sellerask += plusminus_seller
+        buyerask += plusminus_buyer
         timeLeft -= 1
         done = timeLeft <= 0 
         done = bool(done)
