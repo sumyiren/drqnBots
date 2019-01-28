@@ -10,7 +10,7 @@ from drqnMLEngine.DRQNseller import dqrnSeller
 class Trainer(object):
 
     def __init__(self, args):
-        self.nSellers = 2
+        self.nSellers = 3
         self.reward_record = []
 
         self.n_agents = self.nSellers
@@ -20,7 +20,7 @@ class Trainer(object):
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
         self.max_steps = 150
-        self.n_episode = 4050
+        self.n_episode = 5050
 
         # Parameter setting
         self.Num_action = 3
@@ -35,7 +35,7 @@ class Trainer(object):
 
         # DRQN Parameters
         self.step_size = 50
-        self.teamSpirit = 0.5
+        self.teamSpirit = 0.3
         self.world = world(self.nSellers, self.max_steps, self.teamSpirit)
         self.bB = []
         self.sB = []
@@ -96,6 +96,8 @@ class Trainer(object):
 
 
     def saveModel(self, step):
+        if self.save_folder == None:
+            self.save_folder = './output'
         print('SAVED MODEL')
         self.saver = tf.train.Saver()
         self.saver.save(self.sess, self.save_folder+'/model', global_step=step)

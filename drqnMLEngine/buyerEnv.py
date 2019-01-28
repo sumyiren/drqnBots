@@ -27,16 +27,18 @@ class buyerEnv(gym.Env):
 
 
         
-    def step(self, action, sellerask_new):
+    def step(self, action_buyer, action_seller):
         state = self.state
         sellerask, buyerask, maxprice, timeLeft = state
-        if action != None:
-            plusminus = self.AVAIL_TORQUE[action]
+        if action_buyer != None:
+            plusminus_buyer = self.AVAIL_TORQUE[action_buyer]
+            plusminus_seller = self.AVAIL_TORQUE[action_seller]
         else:
-            plusminus = 0
+            plusminus_buyer = 0
+            plusminus_seller = 0
             
-        buyerask += plusminus
-        sellerask = sellerask_new
+        buyerask += plusminus_buyer
+        sellerask += plusminus_seller
         timeLeft -= 1
         done = timeLeft <= 0 
         done = bool(done)

@@ -587,7 +587,7 @@ start with: M, P, negotiate, market, arke, reinforcement, adversary
 
 broker
 
-                  RL
+                  
 
 20/1/2019
 
@@ -599,3 +599,20 @@ tsukiji-ai.com, seo nightmare :(
 
 
 model is stable, I think, time to train larger model? 3nsellers?
+
+
+21/1/2019
+
+[NG013] make seller dimensions smaller by removing repetitions
+
+
+
+22/1/2019
+nseller = 3
+test18gpu
+3500
+2 days and 39 mins
+
+try training deeper models
+
+[NG014] build to continue training from saved model

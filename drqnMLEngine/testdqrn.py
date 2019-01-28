@@ -35,7 +35,7 @@ Num_testing  = 10000
 Num_update = 250
 Num_batch = 8
 Num_episode_plot = 30
-nSellers = 2
+nSellers = 3
 max_steps = 150
 teamSpirit = 0.5
 # DRQN Parameters
@@ -44,8 +44,8 @@ step_size = 50
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/localtest10/model-2500.meta')
-saver.restore(sess, '../output/localtest10/model-2500')
+saver = tf.train.import_meta_graph('../output/test_18gpu/model-3500.meta')
+saver.restore(sess, '../output/test_18gpu/model-3500')
 
 sB = []
 bB = []
@@ -53,7 +53,7 @@ bB = []
 graph = tf.get_default_graph()
 
 for i in range(nSellers):
-    j = i
+    j = 2
     bB.append(dqrnBuyer('BuyerAgent'+str(j)))
     bB[i].x = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/x:0')
     bB[i].rnn_batch_size = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_batch_size:0')
@@ -110,14 +110,20 @@ for i in range(nSellers):
     action_step = np.argmax(bB[i].action)
     actions_buyer[i] = action_step
 
+#print at the start
+for i in range(nSellers):
+    print('nSeller:'+str(i))
+#        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]))
+    print('SellerAsk = ' +str(obs_seller[i])+ 'BuyerAsk = ' + str(obs_buyer[i]))
+
 
 step = 0
 while step < max_steps:
     state = 'Testing'
-    for i in range(nSellers):
-        print('nSeller:'+str(i))
-#        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]))
-        print('SellerAsk = ' +str(obs_seller[i])+ 'BuyerAsk = ' + str(obs_buyer[i]))
+#    for i in range(nSellers):
+#        print('nSeller:'+str(i))
+##        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]))
+#        print('SellerAsk = ' +str(obs_seller[i])+ 'BuyerAsk = ' + str(obs_buyer[i]))
         
     #sellers
     actions_seller = [world.action_space.sample()]*nSellers
@@ -154,7 +160,12 @@ while step < max_steps:
     obs_buyer = obs_buyer_
     obs_seller = obs_seller_
 
-    
+#print at the end
+print('-------------------------------------')
+for i in range(nSellers):
+    print('nSeller:'+str(i))
+#        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]))
+    print('SellerAsk = ' +str(obs_seller[i])+ 'BuyerAsk = ' + str(obs_buyer[i]))
     
     
     

@@ -22,7 +22,7 @@ import random
 class world():
 
     def __init__(self, nSellers, maxSteps, teamSpirit):
-        self.askingPrice = 5
+        self.askingPrice = 5.0
         self.nSellers = nSellers
         self.totalTime = maxSteps
         self.nSellers = nSellers
@@ -57,14 +57,21 @@ class world():
         
         #do seller step first
         for i in range(self.nSellers):
-            state, done = self.sellerEnvs[i].step(actions_seller[i], self.buyerStates[i][1])
+            state, done = self.sellerEnvs[i].step(actions_seller[i], actions_buyer[i])
             self.sellerStates[i] = state
 
         self.sellerStackStates = self.getSellerStackStates()
         #do buyer step
         for i in range(self.nSellers):
-            state, done = self.buyerEnvs[i].step(actions_buyer[i], self.sellerStates[i][0])
+            state, done = self.buyerEnvs[i].step(actions_buyer[i], actions_seller[i])
             self.buyerStates[i] = state
+
+
+        print('----------------------')
+        print('buyerstates')
+        print(self.buyerStates)
+        print('sellerstates')
+        print(self.sellerStates)
         
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
@@ -107,10 +114,10 @@ class world():
         return sellerReward
         
     def reset(self):
-        n1 = 50
-        n2 = 100
-        n3 = 1
-        n4 = 49
+        n1 = 50.0
+        n2 = 100.0
+        n3 = 1.0
+        n4 = 49.0
         self.askingPrice = random.randint(n1,n2)
         minPrice = self.askingPrice - random.randint(n3,n4)
         self.sellerEnvs = []
