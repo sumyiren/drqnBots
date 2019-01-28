@@ -616,3 +616,8 @@ test18gpu
 try training deeper models
 
 [NG014] build to continue training from saved model
+
+
+27/1/2019
+
+fixed unsync error, such a glaring mistake
