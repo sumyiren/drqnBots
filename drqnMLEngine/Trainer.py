@@ -154,8 +154,6 @@ class Trainer(object):
         obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
             = self.world.step(actions_seller, actions_buyer)
 
-#        obs_seller_ = self.flattenList(obs_seller_)
-
         for i in range(self.nSellers):
             self.bB[i].observation = obs_buyer_[i]
             self.bB[i].reward = rewards_buyer[i]

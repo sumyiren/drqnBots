@@ -615,9 +615,19 @@ test18gpu
 
 try training deeper models
 
-[NG014] build to continue training from saved model
-
+[NG014] build to continue training from saved model - done (need test?)
+localtest11 done here - 4000
 
 27/1/2019
 
 fixed unsync error, such a glaring mistake
+
+
+28/1/2019
+
+[NG015] Adding zeros
+
+
+29/1/2019
+
+[NG016] anneal teamwork 0 to 1

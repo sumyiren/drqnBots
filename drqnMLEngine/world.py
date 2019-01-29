@@ -40,17 +40,30 @@ class world():
         flat_list = [item for sublist in list for item in sublist]
         return flat_list
         
+#    def getSellerStackStates(self):
+#        sellerStackStates = []
+#        for i in range(self.nSellers):
+#            temp = []
+#            temp.extend(self.sellerStates[i][:])
+#            for j in range(self.nSellers):
+#                if i != j:
+#                    temp.extend(self.sellerStates[j][:])
+#            sellerStackStates.append(temp)
+#        return sellerStackStates
+            
+        
+    # now in the form [seller, buyer, seller, buyer, minPrice, timeRemaining]
     def getSellerStackStates(self):
         sellerStackStates = []
         for i in range(self.nSellers):
             temp = []
-            temp.extend(self.sellerStates[i][:])
+            temp.extend(self.sellerStates[i][0:2])
             for j in range(self.nSellers):
                 if i != j:
-                    temp.extend(self.sellerStates[j][:])
+                    temp.extend(self.sellerStates[j][0:2])
+            temp.extend(self.sellerStates[i][-2:])
             sellerStackStates.append(temp)
         return sellerStackStates
-            
         
 
     def step(self, actions_seller, actions_buyer):
@@ -66,12 +79,6 @@ class world():
             state, done = self.buyerEnvs[i].step(actions_buyer[i], actions_seller[i])
             self.buyerStates[i] = state
 
-
-        print('----------------------')
-        print('buyerstates')
-        print(self.buyerStates)
-        print('sellerstates')
-        print(self.sellerStates)
         
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
