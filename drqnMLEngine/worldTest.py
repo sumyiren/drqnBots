@@ -40,17 +40,30 @@ class world():
         flat_list = [item for sublist in list for item in sublist]
         return flat_list
         
+#    def getSellerStackStates(self):
+#        sellerStackStates = []
+#        for i in range(self.nSellers):
+#            temp = []
+#            temp.extend(self.sellerStates[i][:])
+#            for j in range(self.nSellers):
+#                if i != j:
+#                    temp.extend(self.sellerStates[j][:])
+#            sellerStackStates.append(temp)
+#        return sellerStackStates
+            
+        
+    # now in the form [seller, buyer, seller, buyer, minPrice, timeRemaining]
     def getSellerStackStates(self):
         sellerStackStates = []
         for i in range(self.nSellers):
             temp = []
-            temp.extend(self.sellerStates[i][:])
+            temp.extend(self.sellerStates[i][0:2])
             for j in range(self.nSellers):
                 if i != j:
-                    temp.extend(self.sellerStates[j][:])
+                    temp.extend(self.sellerStates[j][0:2])
+            temp.extend(self.sellerStates[i][-2:])
             sellerStackStates.append(temp)
         return sellerStackStates
-            
         
 
     def step(self, actions_seller, actions_buyer):
@@ -120,10 +133,6 @@ class world():
             maxPrice = self.askingPrice + random.randint(n3,n4)
             self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, minPrice))
             self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, maxPrice))
-            
-        #TODO: REMOVE THIS
-#        self.sellerEnvs.append(sellerEnv(0, 0, 0))
-#        self.buyerEnvs.append(buyerEnv(0,0,0))
 
         self.sellerStates = []
         self.sellerStackStates = []

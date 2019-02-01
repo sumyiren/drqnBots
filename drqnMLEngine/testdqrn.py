@@ -53,7 +53,7 @@ bB = []
 graph = tf.get_default_graph()
 
 for i in range(nSellers):
-    j = i
+    j = 0
     bB.append(dqrnBuyer('BuyerAgent'+str(j)))
     bB[i].x = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/x:0')
     bB[i].rnn_batch_size = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_batch_size:0')
@@ -144,7 +144,13 @@ while step < max_steps:
         actions_buyer[i] = action_step
     
     obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
-            = world.step(actions_seller, actions_buyer)   
+            = world.step(actions_seller, actions_buyer)  
+            
+    print('-------------------------------------')
+    for i in range(nSellers):
+        print('nSeller:'+str(i))
+    #        print('SellerAsk = ' +str(obs_buyer[i][0])+ 'BuyerAsk = ' + str(obs_buyer[i][1]))
+        print('SellerAsk = ' +str(obs_seller[i])+ 'BuyerAsk = ' + str(obs_buyer[i]))
     
     for i in range(nSellers):
         bB[i].observation = obs_buyer_[i]
