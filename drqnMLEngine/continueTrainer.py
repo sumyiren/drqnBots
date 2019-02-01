@@ -30,12 +30,13 @@ class continueTrainer(object):
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 2000000
-        self.Num_start_training = 10000
+        self.Num_start_training = 100000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
         self.step_size = 50
-        self.teamSpirit = 0.5
+        self.teamSpirit = 0
+        self.teamSpirit_epsilon = 1/self.n_episode
         self.world = world(self.nSellers, self.max_steps, self.teamSpirit)
         self.bB = []
         self.sB = []
@@ -141,8 +142,8 @@ class continueTrainer(object):
 #        saver = tf.train.Saver()
         
         with tf.Session() as self.sess:
-            saver = tf.train.import_meta_graph('./output/test_18gpu/model-3500.meta')
-            saver.restore(self.sess, './output/test_18gpu/model-3500')
+            saver = tf.train.import_meta_graph('./output/model-4000.meta')
+            saver.restore(self.sess, './output/model-4000')
             
             init = tf.global_variables_initializer()
             self.sess.run(init)
@@ -308,6 +309,8 @@ class continueTrainer(object):
                         break
                     if self.bB[0].step > self.Num_start_training:
                         self.episode_no = self.episode_no + 1
+                        self.teamSpirit += self.teamSpirit_epsilon
+                        self.world.teamSpirit = self.teamSpirit
                 
                 
         print('FINISHED')

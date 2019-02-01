@@ -20,7 +20,7 @@ class Trainer(object):
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
         self.max_steps = 150
-        self.n_episode = 5050
+        self.n_episode = 4050
 
         # Parameter setting
         self.Num_action = 3
@@ -35,7 +35,8 @@ class Trainer(object):
 
         # DRQN Parameters
         self.step_size = 50
-        self.teamSpirit = 0.3
+        self.teamSpirit = 0
+        self.teamSpirit_epsilon = 1/self.n_episode
         self.world = world(self.nSellers, self.max_steps, self.teamSpirit)
         self.bB = []
         self.sB = []
@@ -153,8 +154,6 @@ class Trainer(object):
 
         obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
             = self.world.step(actions_seller, actions_buyer)
-
-#        obs_seller_ = self.flattenList(obs_seller_)
 
         for i in range(self.nSellers):
             self.bB[i].observation = obs_buyer_[i]
@@ -298,12 +297,15 @@ class Trainer(object):
 
 
                 self.isRandom = random.random() < self.Epsilon
+ 
                 
                 #check ending here
                 if self.episode_no > self.n_episode:
                     break
                 if self.bB[0].step > self.Num_start_training:
                     self.episode_no = self.episode_no + 1
+                    self.teamSpirit += self.teamSpirit_epsilon
+                    self.world.teamSpirit = self.teamSpirit
                 
                 
         print('FINISHED')

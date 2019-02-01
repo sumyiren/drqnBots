@@ -22,7 +22,7 @@ import random
 class world():
 
     def __init__(self, nSellers, maxSteps, teamSpirit):
-        self.askingPrice = 5
+        self.askingPrice = 5.0
         self.nSellers = nSellers
         self.totalTime = maxSteps
         self.nSellers = nSellers
@@ -40,31 +40,45 @@ class world():
         flat_list = [item for sublist in list for item in sublist]
         return flat_list
         
+#    def getSellerStackStates(self):
+#        sellerStackStates = []
+#        for i in range(self.nSellers):
+#            temp = []
+#            temp.extend(self.sellerStates[i][:])
+#            for j in range(self.nSellers):
+#                if i != j:
+#                    temp.extend(self.sellerStates[j][:])
+#            sellerStackStates.append(temp)
+#        return sellerStackStates
+            
+        
+    # now in the form [seller, buyer, seller, buyer, minPrice, timeRemaining]
     def getSellerStackStates(self):
         sellerStackStates = []
         for i in range(self.nSellers):
             temp = []
-            temp.extend(self.sellerStates[i][:])
+            temp.extend(self.sellerStates[i][0:2])
             for j in range(self.nSellers):
                 if i != j:
-                    temp.extend(self.sellerStates[j][:])
+                    temp.extend(self.sellerStates[j][0:2])
+            temp.extend(self.sellerStates[i][-2:])
             sellerStackStates.append(temp)
         return sellerStackStates
-            
         
 
     def step(self, actions_seller, actions_buyer):
         
         #do seller step first
         for i in range(self.nSellers):
-            state, done = self.sellerEnvs[i].step(actions_seller[i], self.buyerStates[i][1])
+            state, done = self.sellerEnvs[i].step(actions_seller[i], actions_buyer[i])
             self.sellerStates[i] = state
 
         self.sellerStackStates = self.getSellerStackStates()
         #do buyer step
         for i in range(self.nSellers):
-            state, done = self.buyerEnvs[i].step(actions_buyer[i], self.sellerStates[i][0])
+            state, done = self.buyerEnvs[i].step(actions_buyer[i], actions_seller[i])
             self.buyerStates[i] = state
+
         
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
@@ -107,10 +121,10 @@ class world():
         return sellerReward
         
     def reset(self):
-        n1 = 50
-        n2 = 100
-        n3 = 1
-        n4 = 49
+        n1 = 50.0
+        n2 = 100.0
+        n3 = 1.0
+        n4 = 49.0
         self.askingPrice = random.randint(n1,n2)
         minPrice = self.askingPrice - random.randint(n3,n4)
         self.sellerEnvs = []
