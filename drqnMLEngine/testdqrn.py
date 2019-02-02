@@ -44,8 +44,8 @@ step_size = 50
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/model-4000.meta')
-saver.restore(sess, '../output/model-4000')
+saver = tf.train.import_meta_graph('../output/localtest12/model-2000.meta')
+saver.restore(sess, '../output/localtest12/model-2000')
 
 sB = []
 bB = []
@@ -53,7 +53,7 @@ bB = []
 graph = tf.get_default_graph()
 
 for i in range(nSellers):
-    j = 0
+    j = i
     bB.append(dqrnBuyer('BuyerAgent'+str(j)))
     bB[i].x = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/x:0')
     bB[i].rnn_batch_size = graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_batch_size:0')

@@ -631,3 +631,30 @@ fixed unsync error, such a glaring mistake
 29/1/2019
 
 [NG016] anneal teamwork 0 to 1
+
+localtest12 done here
+
+
+1/2/2019
+
+only 1 deal has to realistically be made by seller
+localtest13
+
+
+increasing lstm size for seller
+localtest14
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -113,12 +113,17 @@ class world():
             reward = self.buyerEnvs[valPos].calcReward(self.buyerStates[valPos][0], self.buyerStates[valPos][1], True)
             self.buyerRewards[valPos] = reward
 
-
     def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
-        avgSellerReward = np.average(sellerReward)
+        maxSellerReward = max(sellerReward)
         for i in range(len(sellerReward)):
-            sellerReward[i] = self.teamSpirit*avgSellerReward + (1-self.teamSpirit)*sellerReward[i]
+            sellerReward[i] = maxSellerReward
         return sellerReward
+
+#    def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
+#        avgSellerReward = np.average(sellerReward)
+#        for i in range(len(sellerReward)):
+#            sellerReward[i] = self.teamSpirit*avgSellerReward + (1-self.teamSpirit)*sellerReward[i]
+#        return sellerReward
         
     def reset(self):
         n1 = 50.0
