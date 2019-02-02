@@ -637,10 +637,12 @@ localtest12 done here
 
 1/2/2019
 
+[NG017]
 only 1 deal has to realistically be made by seller
 localtest13
 
 
+[NG018]
 increasing lstm size for seller
 localtest14
 
