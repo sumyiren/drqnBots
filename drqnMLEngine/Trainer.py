@@ -251,7 +251,10 @@ class Trainer(object):
                     print('DONE')
                     for i in range(self.nSellers):
                         print('Case ' +str(i))
-                        print('SellerAsk = ' +str(obs_buyer_[i][0])+ 'BuyerAsk = ' + str(obs_buyer_[i][1]))
+                        print('SellerAsk = ' +str(obs_buyer_[i][0])
+                        + 'BuyerAsk = ' + str(obs_buyer_[i][1]) 
+                        + 'RewardSeller = ' + str(self.sB[i].reward) 
+                        + 'RewardBuyer = ' + str(self.bB[i].reward))
 
                 # # Run Saver here
                 # if self.bB[0].step > self.Num_start_training:

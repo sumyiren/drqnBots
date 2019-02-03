@@ -647,6 +647,12 @@ increasing lstm size for seller
 localtest14
 
 
+3/2/2019
+
+[NG019] One seller 3 envs again
+
+seller does not need 3 of the same type - repeating information
+
 
 
 
