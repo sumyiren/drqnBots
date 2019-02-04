@@ -115,8 +115,9 @@ class world():
 
     def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
         maxSellerReward = max(sellerReward)
-        for i in range(len(sellerReward)):
-            sellerReward[i] = maxSellerReward
+        if maxSellerReward >= 0:
+            for i in range(len(sellerReward)):
+                sellerReward[i] = maxSellerReward
         return sellerReward
 
 #    def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity

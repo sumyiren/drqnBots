@@ -651,7 +651,13 @@ localtest14
 
 [NG019] One seller 3 envs again
 
-seller does not need 3 of the same type - repeating information
+seller does not need 3 of the same type - repeating information - try this with float implementation for action
+if not the other 2 drqn has no control over each other -difficult to communicate
+
+
+[NG020] Only max used for seller when deal is made
+localtest15
+
 
 
 
