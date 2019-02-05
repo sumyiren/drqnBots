@@ -10,8 +10,7 @@ envs = []
 algorithm = 'DRQN'
 
 # Parameter setting 
-nSellers = 3
-Num_action = 3
+Num_action = 1
 Gamma = 0.99
 Learning_rate = 0.00025
 
@@ -24,11 +23,11 @@ Num_episode_plot = 30
 
 # DRQN Parameters
 #step_size = 4
-lstm_size = 512
-flatten_size = (2*nSellers)+2
+lstm_size = 256
+
 
 class dqrnSeller(object):
-    def __init__(self, scope):
+    def __init__(self, scope, nSellers, step_size):
         self.scope = scope
         self.episode_memory = []
         self.observation_set = []
@@ -47,7 +46,10 @@ class dqrnSeller(object):
         self.step = 1
         self.score = 0
         self.episode = 0
-        self.Num_batch = 6
+        self.Num_batch = 8
+        self.nSellers = nSellers
+        self.step_size = step_size
+        self.flatten_size = (2*self.nSellers)+2
         
 
         
@@ -55,15 +57,15 @@ class dqrnSeller(object):
 
         with tf.variable_scope(self.scope):
             # Input
-            self.x = tf.placeholder(tf.float32, shape = [None, (2*nSellers)+2], name="x")
+            self.x = tf.placeholder(tf.float32, shape = [None, (2*self.nSellers)+2], name="x")
     
-            self.w_fc = self.weight_variable([lstm_size, Num_action])
-            self.b_fc = self.bias_variable([Num_action])
+            self.w_fc = self.weight_variable([lstm_size, self.nSellers])
+            self.b_fc = self.bias_variable([self.nSellers])
     
             self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
             self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
     
-            self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , flatten_size])
+            self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , self.flatten_size])
     
             with tf.variable_scope('network'):
                 self.cell = tf.nn.rnn_cell.LSTMCell(num_units = lstm_size, state_is_tuple = True)
@@ -76,7 +78,7 @@ class dqrnSeller(object):
             self.output = tf.add(tf.matmul(self.rnn_out, self.w_fc), self.b_fc, name="op_to_restore")
     
             # Loss function and Train
-            self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action], name="action_target")
+            self.action_target = tf.placeholder(tf.float32, shape = [None, self.nSellers], name="action_target")
             self.y_prediction = tf.placeholder(tf.float32, shape = [None], name="y_prediction")
     
             self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
@@ -118,15 +120,15 @@ class dqrnSeller(object):
           Tensor of shape [batch_size, NUM_VALID_ACTIONS] containing the estimated
           action values.
         """
-        return self.output.eval(feed_dict={self.x: obs, self.rnn_batch_size: rnn_batch_size, self.rnn_step_size: rnn_step_size})[0]
+        return self.output.eval(feed_dict={self.x: np.reshape(obs, [self.step_size, self.flatten_size]), self.rnn_batch_size: rnn_batch_size, self.rnn_step_size: rnn_step_size})[0]
 
     def get_output_batch(self, obs, rnn_batch_size, rnn_step_size):
 
-        return self.output.eval(feed_dict={self.x: obs, self.rnn_batch_size: rnn_batch_size, self.rnn_step_size: rnn_step_size})
+        return self.output.eval(feed_dict={self.x: np.reshape(obs, [self.step_size * self.Num_batch, self.flatten_size]), self.rnn_batch_size: rnn_batch_size, self.rnn_step_size: rnn_step_size})
 
 
     def trainStep(self, action_in, y_batch, observation_batch, Num_batch, step_size):
-        self.train_step.run(feed_dict = {self.action_target: action_in, self.y_prediction: y_batch, self.x: observation_batch, self.rnn_batch_size: Num_batch, self.rnn_step_size: step_size})
+        self.train_step.run(feed_dict = {self.action_target: action_in, self.y_prediction: y_batch, self.x:  np.reshape(observation_batch, [self.step_size * self.Num_batch, self.flatten_size]), self.rnn_batch_size: Num_batch, self.rnn_step_size: step_size})
 
 #    def saveModel(self, step, i):
 #        saver = tf.train.Saver()

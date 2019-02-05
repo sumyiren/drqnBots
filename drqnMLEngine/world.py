@@ -54,16 +54,11 @@ class world():
         
     # now in the form [seller, buyer, seller, buyer, minPrice, timeRemaining]
     def getSellerStackStates(self):
-        sellerStackStates = []
-        for i in range(self.nSellers):
-            temp = []
-            temp.extend(self.sellerStates[i][0:2])
-            for j in range(self.nSellers):
-                if i != j:
-                    temp.extend(self.sellerStates[j][0:2])
-            temp.extend(self.sellerStates[i][-2:])
-            sellerStackStates.append(temp)
-        return sellerStackStates
+        temp = []
+        for j in range(self.nSellers):
+            temp.extend(self.sellerStates[j][0:2])
+        temp.extend(self.sellerStates[0][-2:])
+        return [temp]
         
 
     def step(self, actions_seller, actions_buyer):
@@ -88,10 +83,12 @@ class world():
             reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
             self.buyerRewards[i] = reward
 
-        if done: 
-            self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
-                
-        return self.sellerStackStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
+        self.sellerReward = max(self.sellerRewards)
+
+#        if done:
+#            self.sellerReward = self.calcFinalSellerReward(self.sellerRewards)
+
+        return self.sellerStackStates, self.buyerStates, self.sellerReward, self.buyerRewards, done
         
         
     #deprecated - unused

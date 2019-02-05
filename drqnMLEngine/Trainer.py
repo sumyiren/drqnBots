@@ -23,7 +23,6 @@ class Trainer(object):
         self.n_episode = 4050
 
         # Parameter setting
-        self.Num_action = 3
         self.Gamma = 0.99
         self.Learning_rate = 0.00025
         self.Epsilon = 0.1
@@ -39,7 +38,7 @@ class Trainer(object):
         self.teamSpirit_epsilon = 1/self.n_episode
         self.world = world(self.nSellers, self.max_steps, self.teamSpirit)
         self.bB = []
-        self.sB = []
+        self.sBa = None
         self.count = 0
         self.save_folder = args.job_dir
         self.sess = None
@@ -84,6 +83,7 @@ class Trainer(object):
         # Get y_prediction
         sbB.y_batch = []
         sbB.action_in = []
+
         Q_batch = sbB.get_output_batch(observation_next_batch, sbB.Num_batch, self.step_size)
         #            Q_batch = output.eval(feed_dict = {x: observation_next_batch, rnn_batch_size: Num_batch, rnn_step_size: step_size})
         for count, j in enumerate(sbB.batch_end_index):
@@ -133,11 +133,9 @@ class Trainer(object):
             self.bB.append(dqrnBuyer('BuyerAgent'+str(i)))
             self.bB[i].build_model()
             self.bB[i].observation = obs_buyer[i]
-
-            self.sB.append(dqrnSeller('SellerAgent'+str(i)))
-            self.sB[i].build_model()
-            self.sB[i].observation = obs_seller[i]
-            self.sB[i].action = self.world.action_space.sample()
+        self.sBa = dqrnSeller('SellerAgent', self.nSellers, self.step_size)
+        self.sBa.build_model()
+        self.sBa.observation = obs_seller
 
         #run session
         config = tf.ConfigProto(log_device_placement=True)
@@ -151,9 +149,6 @@ class Trainer(object):
         actions_seller = np.random.uniform(low=-1, high=1, size=(self.nSellers,))
 
 
-        for i in range(self.nSellers):
-            actions_buyer[i] =  actions_seller[i] = self.sB[i].action
-
         obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
             = self.world.step(actions_seller, actions_buyer)
 
@@ -161,9 +156,9 @@ class Trainer(object):
             self.bB[i].observation = obs_buyer_[i]
             self.bB[i].reward = rewards_buyer[i]
             self.bB[i].terminal = done
-            self.sB[i].observation = obs_seller_[i]
-            self.sB[i].reward = rewards_seller[i]
-            self.sB[i].terminal = done
+        self.sBa.observation = obs_seller_
+        self.sBa.reward = rewards_seller
+        self.sBa.terminal = done
 
         while True:
 
@@ -175,10 +170,8 @@ class Trainer(object):
                     self.bB[i].action = actions_buyer[i]
 
                 for i in range(self.nSellers):
-                    self.sB[i].action = np.zeros([self.Num_action])
-                    self.sB[i].action[random.randint(0, self.Num_action - 1)] = 1.0
-                    action_step = np.argmax(self.sB[i].action)
-                    actions_seller[i] = action_step
+                    actions_seller[i] = random.uniform(-1, 1)
+                self.sBa.action = actions_seller
 
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
                     = self.world.step(actions_seller, actions_buyer)
@@ -186,11 +179,12 @@ class Trainer(object):
                 for i in range(self.nSellers):
                     self.bB[i].observation_next = obs_buyer_[i]
                     self.bB[i].reward = rewards_buyer[i]
-                    self.sB[i].observation_next = obs_seller_[i]
-                    self.sB[i].reward = rewards_seller[i]
-                    self.sB[i].terminal, self.bB[i].terminal = done, done
-                    if self.bB[i].step % 100 == 0:
-                        print('step: ' + str(self.bB[i].step) + ' / '  + 'state: ' + state)
+                    self.bB[i].terminal = done
+                self.sBa.observation_next = obs_seller_
+                self.sBa.reward = rewards_seller
+                self.sBa.terminal = done
+                if self.bB[i].step % 100 == 0:
+                    print('step: ' + str(self.bB[i].step) + ' / '  + 'state: ' + state)
 
             elif not self.bB[0].terminal:
                 
@@ -204,22 +198,18 @@ class Trainer(object):
                         self.bB[i].action = actions_buyer[i]
 
                     for i in range(self.nSellers):
-                        self.sB[i].action = np.zeros([self.Num_action])
-                        self.sB[i].action[random.randint(0, self.Num_action - 1)] = 1.0
-                        action_step = np.argmax(self.sB[i].action)
-                        actions_seller[i] = action_step
+                        actions_seller[i] = random.uniform(-1, 1)
+                    self.sBa.action = actions_seller
                 else:
                     for i in range(self.nSellers):
                         Q_value = self.bB[i].get_output(self.bB[i].observation_set, self.Num_batch, self.step_size)
                         actions_buyer[i] = self.clamp(Q_value[0], -1, 1)
                         self.bB[i].action = actions_buyer[i]
 
+                    Q_value = self.sBa.get_output(self.sBa.observation_set, self.Num_batch, self.step_size)
                     for i in range(self.nSellers):
-                        Q_value = self.sB[i].get_output(self.sB[i].observation_set, self.Num_batch, self.step_size)
-                        self.sB[i].action = np.zeros([self.Num_action])
-                        self.sB[i].action[np.argmax(Q_value)] = 1
-                        action_step = np.argmax(self.sB[i].action)
-                        actions_seller[i] = action_step
+                        actions_seller[i] = self.clamp(Q_value[i], -1, 1)
+                    self.sBa.action = actions_seller
 
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
                     = self.world.step(actions_seller, actions_buyer)
@@ -227,18 +217,18 @@ class Trainer(object):
                 for i in range(self.nSellers):
                     self.bB[i].observation_next = obs_buyer_[i]
                     self.bB[i].reward = rewards_buyer[i]
-                    self.sB[i].observation_next = obs_seller_[i]
-                    self.sB[i].reward = rewards_seller[i]
-                    self.sB[i].terminal, self.bB[i].terminal = done, done
-
+                    self.bB[i].terminal = done
+                self.sBa.observation_next = obs_seller_
+                self.sBa.reward = rewards_seller
+                self.sBa.terminal = done
                 for i in range(self.nSellers):
                     self.performMiniBatching(self.bB[i])
-                    self.performMiniBatching(self.sB[i])
+                self.performMiniBatching(self.sBa)
                 
             # Save experience to the Replay memory
             for i in range(self.nSellers):
                 self.saveExperience(self.bB[i])
-                self.saveExperience(self.sB[i])
+            self.saveExperience(self.sBa)
 
 
             # Terminal
@@ -249,7 +239,7 @@ class Trainer(object):
                         print('Case ' +str(i))
                         print('SellerAsk = ' +str(obs_buyer_[i][0])
                         + 'BuyerAsk = ' + str(obs_buyer_[i][1]) 
-                        + 'RewardSeller = ' + str(self.sB[i].reward) 
+                        + 'RewardSeller = ' + str(self.sBa.reward)
                         + 'RewardBuyer = ' + str(self.bB[i].reward))
 
                 # # Run Saver here
@@ -281,18 +271,18 @@ class Trainer(object):
                         self.bB[i].observation_set.append(self.bB[i].observation)
                     self.bB[i].terminal = False
 
-                    if len(self.sB[i].episode_memory) > self.step_size:
-                        self.sB[i].Replay_memory.append(self.sB[i].episode_memory)
-                    self.sB[i].episode_memory = []
+                if len(self.sBa.episode_memory) > self.step_size:
+                    self.sBa.Replay_memory.append(self.sBa.episode_memory)
+                self.sBa.episode_memory = []
 
-                    self.sB[i].score = 0
-                    self.sB[i].episode += 1
-                    self.sB[i].observation = obs_seller[i]
+                self.sBa.score = 0
+                self.sBa.episode += 1
+                self.sBa.observation = obs_seller
 
-                    self.sB[i].observation_set = []
-                    for j in range(self.step_size):
-                        self.sB[i].observation_set.append(self.sB[i].observation)
-                    self.sB[i].terminal = False
+                self.sBa.observation_set = []
+                for j in range(self.step_size):
+                    self.sBa.observation_set.append(self.sBa.observation)
+                self.sBa.terminal = False
 
 
                 self.isRandom = random.random() < self.Epsilon
