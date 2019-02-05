@@ -42,8 +42,8 @@ class sellerEnv(gym.Env):
         state = self.state
         sellerask, buyerask, minprice, timeLeft = state
         if action_seller != None:
-            plusminus_seller = self.AVAIL_TORQUE[action_seller]
-            plusminus_buyer = self.AVAIL_TORQUE[action_buyer]
+            plusminus_seller = action_seller
+            plusminus_buyer = action_buyer
         else:
             plusminus_seller = 0
 
@@ -64,7 +64,7 @@ class sellerEnv(gym.Env):
         
         
         if done:
-            if sellerask == buyerask:
+            if abs(buyerask-sellerask) < 1:
                 
                 if sellerask < self.minprice:
                     reward += 0#-1 * abs(sellerask - self.minprice)

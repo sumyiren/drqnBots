@@ -10,7 +10,7 @@ envs = []
 algorithm = 'DRQN'
 
 # Parameter setting 
-Num_action = 3
+Num_action = 1
 Gamma = 0.99
 Learning_rate = 0.00025
 
@@ -124,7 +124,7 @@ class dqrnBuyer(object):
 
 
     def trainStep(self, action_in, y_batch, observation_batch, Num_batch, step_size):
-        self.train_step.run(feed_dict = {self.action_target: action_in, self.y_prediction: y_batch, self.x: observation_batch, self.rnn_batch_size: Num_batch, self.rnn_step_size: step_size})
+        self.train_step.run(feed_dict = {self.action_target: np.reshape(action_in, [self.Num_batch, Num_action]), self.y_prediction: y_batch, self.x: observation_batch, self.rnn_batch_size: Num_batch, self.rnn_step_size: step_size})
 
 #    def saveModel(self, step, i):
 #        saver = tf.train.Saver()

@@ -30,7 +30,7 @@ class Trainer(object):
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 2000000
-        self.Num_start_training = 100000
+        self.Num_start_training = 10000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
@@ -62,6 +62,7 @@ class Trainer(object):
         sbB.minibatch = []
         sbB.batch_end_index = []
         sbB.count_minibatch = 0
+
 
         for episode_ in episode_batch:
             episode_start = np.random.randint(0, len(episode_) + 1 - self.step_size)
@@ -95,6 +96,8 @@ class Trainer(object):
         sbB.trainStep(sbB.action_in, sbB.y_batch, observation_batch, sbB.Num_batch, self.step_size)
         # Reduce epsilon at training mode
 
+    def clamp(self, n, minn, maxn):
+        return max(min(maxn, n), minn)
 
     def saveModel(self, step):
         if self.save_folder == None:
@@ -130,7 +133,6 @@ class Trainer(object):
             self.bB.append(dqrnBuyer('BuyerAgent'+str(i)))
             self.bB[i].build_model()
             self.bB[i].observation = obs_buyer[i]
-            self.bB[i].action = self.world.action_space.sample()
 
             self.sB.append(dqrnSeller('SellerAgent'+str(i)))
             self.sB[i].build_model()
@@ -145,12 +147,12 @@ class Trainer(object):
         self.sess.run(init)
 
         #actions bundled up for world
-        actions_buyer = [0]*self.nSellers
-        actions_seller = [0]*self.nSellers
+        actions_buyer = np.random.uniform(low=-1, high=1, size=(self.nSellers,))
+        actions_seller = np.random.uniform(low=-1, high=1, size=(self.nSellers,))
+
 
         for i in range(self.nSellers):
-            actions_buyer[i] = self.bB[i].action
-            actions_seller[i] = self.sB[i].action
+            actions_buyer[i] =  actions_seller[i] = self.sB[i].action
 
         obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
             = self.world.step(actions_seller, actions_buyer)
@@ -169,10 +171,8 @@ class Trainer(object):
                 state = 'Observing'
 
                 for i in range(self.nSellers):
-                    self.bB[i].action = np.zeros([self.Num_action])
-                    self.bB[i].action[random.randint(0, self.Num_action - 1)] = 1.0
-                    action_step = np.argmax(self.bB[i].action)
-                    actions_buyer[i] = action_step
+                    actions_buyer[i] = random.uniform(-1, 1)
+                    self.bB[i].action = actions_buyer[i]
 
                 for i in range(self.nSellers):
                     self.sB[i].action = np.zeros([self.Num_action])
@@ -200,10 +200,8 @@ class Trainer(object):
 #                if random.random() < self.Epsilon:
                 if self.isRandom:
                     for i in range(self.nSellers):
-                        self.bB[i].action = np.zeros([self.Num_action])
-                        self.bB[i].action[random.randint(0, self.Num_action - 1)] = 1.0
-                        action_step = np.argmax(self.bB[i].action)
-                        actions_buyer[i] = action_step
+                        actions_buyer[i] = random.uniform(-1, 1)
+                        self.bB[i].action = actions_buyer[i]
 
                     for i in range(self.nSellers):
                         self.sB[i].action = np.zeros([self.Num_action])
@@ -213,10 +211,8 @@ class Trainer(object):
                 else:
                     for i in range(self.nSellers):
                         Q_value = self.bB[i].get_output(self.bB[i].observation_set, self.Num_batch, self.step_size)
-                        self.bB[i].action = np.zeros([self.Num_action])
-                        self.bB[i].action[np.argmax(Q_value)] = 1
-                        action_step = np.argmax(self.bB[i].action)
-                        actions_buyer[i] = action_step
+                        actions_buyer[i] = self.clamp(Q_value[0], -1, 1)
+                        self.bB[i].action = actions_buyer[i]
 
                     for i in range(self.nSellers):
                         Q_value = self.sB[i].get_output(self.sB[i].observation_set, self.Num_batch, self.step_size)
