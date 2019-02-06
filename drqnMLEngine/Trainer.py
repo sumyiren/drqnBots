@@ -25,11 +25,11 @@ class Trainer(object):
         # Parameter setting
         self.Gamma = 0.99
         self.Learning_rate = 0.00025
-        self.Epsilon = 0.1
+        self.Epsilon = 0.2
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 2000000
-        self.Num_start_training = 10000
+        self.Num_start_training = 100000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
