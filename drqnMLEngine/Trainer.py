@@ -116,7 +116,7 @@ class Trainer(object):
 
         # Update parameters at every iteration
         sbB.step += 1
-        sbB.score += sbB.reward
+#        sbB.score += sbB.reward
 
 
         sbB.observation = sbB.observation_next

@@ -79,9 +79,9 @@ class dqrnSeller(object):
     
             # Loss function and Train
             self.action_target = tf.placeholder(tf.float32, shape = [None, self.nSellers], name="action_target")
-            self.y_prediction = tf.placeholder(tf.float32, shape = [None], name="y_prediction")
+            self.y_prediction = tf.placeholder(tf.float32, shape = [None, self.nSellers], name="y_prediction")
     
-            self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
+            self.y_target = tf.multiply(self.output, self.action_target)
             self.Loss = tf.reduce_mean(tf.square(self.y_prediction - self.y_target))
             self.train_step = tf.train.AdamOptimizer(Learning_rate).minimize(self.Loss)
 

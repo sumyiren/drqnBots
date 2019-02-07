@@ -83,10 +83,12 @@ class world():
             reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
             self.buyerRewards[i] = reward
 
-        self.sellerReward = max(self.sellerRewards)
+        self.sellerReward = self.sellerRewards
 
-#        if done:
-#            self.sellerReward = self.calcFinalSellerReward(self.sellerRewards)
+        if done:
+            if max(self.sellerRewards) > 0:
+                for i in range(self.nSellers):
+                    self.sellerReward[i] = max(self.sellerRewards)
 
         return self.sellerStackStates, self.buyerStates, self.sellerReward, self.buyerRewards, done
         

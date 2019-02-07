@@ -659,11 +659,16 @@ if not the other 2 drqn has no control over each other -difficult to communicate
 localtest15
 
 
+5/2/2019
+
+did during cny half day
+solved NG019
+localtest16 - very explorative 0.2 eps
 
 
+6/2/2019
 
-
-
+localtest17 - using multiple rewards for sellers
 
 
 
