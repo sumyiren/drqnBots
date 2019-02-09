@@ -674,7 +674,7 @@ localtest17 - using multiple rewards for sellers
 
 9/2/2019
 
-float system wonky, change back to integers, but 1 seller 3 buyers still
+float system wonky, change back to integers, but 1 seller 3 buyers still [NG021]
 
 
 

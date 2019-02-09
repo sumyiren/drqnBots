@@ -10,7 +10,6 @@ envs = []
 algorithm = 'DRQN'
 
 # Parameter setting 
-nSellers = 3
 Num_action = 3
 Gamma = 0.99
 Learning_rate = 0.00025
@@ -24,11 +23,11 @@ Num_episode_plot = 30
 
 # DRQN Parameters
 #step_size = 4
-lstm_size = 512
-flatten_size = (2*nSellers)+2
+lstm_size = 256
+
 
 class dqrnSeller(object):
-    def __init__(self, scope):
+    def __init__(self, scope, nSellers):
         self.scope = scope
         self.episode_memory = []
         self.observation_set = []
@@ -47,7 +46,9 @@ class dqrnSeller(object):
         self.step = 1
         self.score = 0
         self.episode = 0
-        self.Num_batch = 6
+        self.Num_batch = 8
+        self.nSellers = nSellers
+        self.flatten_size = (2*self.nSellers)+2
         
 
         
@@ -55,15 +56,15 @@ class dqrnSeller(object):
 
         with tf.variable_scope(self.scope):
             # Input
-            self.x = tf.placeholder(tf.float32, shape = [None, (2*nSellers)+2], name="x")
+            self.x = tf.placeholder(tf.float32, shape = [None, (2*self.nSellers)+2], name="x")
     
-            self.w_fc = self.weight_variable([lstm_size, Num_action])
-            self.b_fc = self.bias_variable([Num_action])
+            self.w_fc = self.weight_variable([lstm_size, Num_action*self.nSellers])
+            self.b_fc = self.bias_variable([Num_action*self.nSellers])
     
             self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
             self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
     
-            self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , flatten_size])
+            self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , self.flatten_size])
     
             with tf.variable_scope('network'):
                 self.cell = tf.nn.rnn_cell.LSTMCell(num_units = lstm_size, state_is_tuple = True)
@@ -76,11 +77,12 @@ class dqrnSeller(object):
             self.output = tf.add(tf.matmul(self.rnn_out, self.w_fc), self.b_fc, name="op_to_restore")
     
             # Loss function and Train
-            self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action], name="action_target")
-            self.y_prediction = tf.placeholder(tf.float32, shape = [None], name="y_prediction")
+            self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action*self.nSellers], name="action_target")
+            self.y_prediction = tf.placeholder(tf.float32, shape = [None, self.nSellers], name="y_prediction") #check this
     
             self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
-            self.Loss = tf.reduce_mean(tf.square(self.y_prediction - self.y_target))
+            self.y_prediction_sq = tf.reduce_sum(self.y_prediction, reduction_indices = 1)
+            self.Loss = tf.reduce_mean(tf.square(self.y_prediction_sq - self.y_target))
             self.train_step = tf.train.AdamOptimizer(Learning_rate).minimize(self.Loss)
 
         # Initialize variables
