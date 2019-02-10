@@ -10,7 +10,7 @@ from drqnMLEngine.DRQNseller import dqrnSeller
 class Trainer(object):
 
     def __init__(self, args):
-        self.nSellers = 1
+        self.nSellers = 3
         self.reward_record = []
 
         self.n_agents = self.nSellers
@@ -130,7 +130,7 @@ class Trainer(object):
             self.bB[i].action = self.world.action_space.sample()
 
         self.sBa = dqrnSeller('SellerAgent', self.nSellers)
-        self.sBa.build_model2()
+        self.sBa.build_model()
         self.sBa.observation = obs_seller
         self.sBa.action = self.world.action_space.sample()
 
@@ -224,10 +224,10 @@ class Trainer(object):
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
                     = self.world.step(actions_seller, actions_buyer)
                 for i in range(self.nSellers):
-                    self.bB[i].observation = obs_buyer_[i]
+                    self.bB[i].observation_next = obs_buyer_[i]
                     self.bB[i].reward = rewards_buyer[i]
                     self.bB[i].terminal = done
-                self.sBa.observation = obs_seller_
+                self.sBa.observation_next = obs_seller_
                 self.sBa.reward = rewards_seller
                 self.sBa.terminal = done
                 for i in range(self.nSellers):
