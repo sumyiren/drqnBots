@@ -10,7 +10,7 @@ from drqnMLEngine.DRQNseller import dqrnSeller
 class Trainer(object):
 
     def __init__(self, args):
-        self.nSellers = 3
+        self.nSellers = 1
         self.reward_record = []
 
         self.n_agents = self.nSellers
@@ -130,7 +130,7 @@ class Trainer(object):
             self.bB[i].action = self.world.action_space.sample()
 
         self.sBa = dqrnSeller('SellerAgent', self.nSellers)
-        self.sBa.build_model()
+        self.sBa.build_model2()
         self.sBa.observation = obs_seller
         self.sBa.action = self.world.action_space.sample()
 
@@ -172,7 +172,7 @@ class Trainer(object):
                     self.sBa.action[random.randint(i*3, i*3+2)] = 1.0
                     action_step = np.argmax(self.sBa.action[i*3:i*3+2])
                     actions_seller[i] = action_step
-
+                
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
                     = self.world.step(actions_seller, actions_buyer)
 
@@ -212,17 +212,17 @@ class Trainer(object):
                         self.bB[i].action[np.argmax(Q_value)] = 1
                         action_step = np.argmax(self.bB[i].action)
                         actions_buyer[i] = action_step
-
+                        
                     self.sBa.action = np.zeros([self.Num_action*self.nSellers])
                     Q_value = self.sBa.get_output(self.sBa.observation_set, self.Num_batch, self.step_size)
                     for i in range(self.nSellers):
                         self.sBa.action[i*3+np.argmax(Q_value[i*3:i*3+2])] = 1
                         action_step = np.argmax(self.sBa.action[i*3:i*3+2])
                         actions_seller[i] = action_step
-                
+                    print(Q_value)
+                    
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
                     = self.world.step(actions_seller, actions_buyer)
-                
                 for i in range(self.nSellers):
                     self.bB[i].observation = obs_buyer_[i]
                     self.bB[i].reward = rewards_buyer[i]
@@ -230,7 +230,6 @@ class Trainer(object):
                 self.sBa.observation = obs_seller_
                 self.sBa.reward = rewards_seller
                 self.sBa.terminal = done
-
                 for i in range(self.nSellers):
                     self.performMiniBatching(self.bB[i])
                 self.performMiniBatching(self.sBa)
