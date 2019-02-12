@@ -456,6 +456,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
+
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -678,5 +679,6 @@ float system wonky, change back to integers, but 1 seller 3 buyers still
 
 
 
-
+11/2/2019
+PASS BY REFERENCE LULLLLLLL
 

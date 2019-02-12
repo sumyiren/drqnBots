@@ -90,7 +90,7 @@ class world():
 
         if done: 
             self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
-                
+#        print(self.sellerRewards)       
         return self.sellerStackStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
         

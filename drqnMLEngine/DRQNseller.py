@@ -10,7 +10,6 @@ envs = []
 algorithm = 'DRQN'
 
 # Parameter setting 
-nSellers = 3
 Num_action = 3
 Gamma = 0.99
 Learning_rate = 0.00025
@@ -21,14 +20,14 @@ Num_testing  = 10000
 Num_update = 250
 Num_batch = 8
 Num_episode_plot = 30
-
+flatten_size = 4
 # DRQN Parameters
 #step_size = 4
 lstm_size = 512
-flatten_size = (2*nSellers)+2
+
 
 class dqrnSeller(object):
-    def __init__(self, scope):
+    def __init__(self, scope, nSellers):
         self.scope = scope
         self.episode_memory = []
         self.observation_set = []
@@ -41,55 +40,54 @@ class dqrnSeller(object):
         self.observation = None
         self.observation_next = None
         self.action = None
-        self.reward = 0
+        self.reward = None
         self.terminal = False
         self.info = None
         self.step = 1
         self.score = 0
         self.episode = 0
-        self.Num_batch = 6
-        
+        self.Num_batch = 8
+        self.nSellers = nSellers
+        self.flatten_size = (2*self.nSellers)+2
 
-        
+
+
     def build_model(self):
 
         with tf.variable_scope(self.scope):
             # Input
-            self.x = tf.placeholder(tf.float32, shape = [None, (2*nSellers)+2], name="x")
-    
-            self.w_fc = self.weight_variable([lstm_size, Num_action])
-            self.b_fc = self.bias_variable([Num_action])
-    
+            self.x = tf.placeholder(tf.float32, shape = [None, self.flatten_size], name="x")
+
+            self.w_fc = self.weight_variable([lstm_size, Num_action*self.nSellers])
+            self.b_fc = self.bias_variable([Num_action*self.nSellers])
+
             self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
             self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
-    
-            self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , flatten_size])
-    
+
+            self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , self.flatten_size])
+
             with tf.variable_scope('network'):
                 self.cell = tf.nn.rnn_cell.LSTMCell(num_units = lstm_size, state_is_tuple = True)
                 self.rnn_out, self.rnn_state = tf.nn.dynamic_rnn(inputs = self.x_rnn, cell = self.cell, dtype = tf.float32)
-    
+
             # Vectorization
             self.rnn_out = self.rnn_out[:, -1, :]
             self.rnn_out = tf.reshape(self.rnn_out, shape = [-1 , lstm_size])
-    
+
             self.output = tf.add(tf.matmul(self.rnn_out, self.w_fc), self.b_fc, name="op_to_restore")
-    
+
             # Loss function and Train
-            self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action], name="action_target")
-            self.y_prediction = tf.placeholder(tf.float32, shape = [None], name="y_prediction")
-    
-            self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
+            self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action*self.nSellers], name="action_target")
+            self.y_prediction = tf.placeholder(tf.float32, shape = [None,1], name="y_prediction") 
+
+            a = tf.multiply(self.output, self.action_target)
+            b = tf.reshape(a, [self.Num_batch, Num_action, self.nSellers])
+            c = tf.reduce_sum(b, axis = 1)
+            self.y_target = c
+            #            self.y_target = tf.reduce_sum(tf.multiply(self.output, self.action_target), reduction_indices = 1)
             self.Loss = tf.reduce_mean(tf.square(self.y_prediction - self.y_target))
+#            self.Loss = tf.nn.sigmoid_cross_entropy_with_logits(labels= self.y_target, logits=self.y_prediction)
             self.train_step = tf.train.AdamOptimizer(Learning_rate).minimize(self.Loss)
-
-        # Initialize variables
-    #        config = tf.ConfigProto(log_device_placement=True)
-    #        config.gpu_options.allow_growth = True
-    #        self.sess = tf.InteractiveSession(config=config)
-    #        init = tf.global_variables_initializer()
-    #        self.sess.run(init)
-
 
 
     # Initialize weights and bias
@@ -127,10 +125,6 @@ class dqrnSeller(object):
 
     def trainStep(self, action_in, y_batch, observation_batch, Num_batch, step_size):
         self.train_step.run(feed_dict = {self.action_target: action_in, self.y_prediction: y_batch, self.x: observation_batch, self.rnn_batch_size: Num_batch, self.rnn_step_size: step_size})
-
-#    def saveModel(self, step, i):
-#        saver = tf.train.Saver()
-#        saver.save(self.sess, './seller_model_'+str(i),global_step=step)
         
 
 
