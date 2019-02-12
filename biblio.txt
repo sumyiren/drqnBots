@@ -456,6 +456,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
+
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -674,12 +675,10 @@ localtest17 - using multiple rewards for sellers
 
 9/2/2019
 
-float system wonky, change back to integers, but 1 seller 3 buyers still [NG021]
+float system wonky, change back to integers, but 1 seller 3 buyers still
 
 
-10/2/2019
 
-something still inherently very wrong. the Qvalues for sellers broken
-
-
+11/2/2019
+PASS BY REFERENCE LULLLLLLL
 

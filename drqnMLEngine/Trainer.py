@@ -5,7 +5,7 @@ import tensorflow as tf
 from drqnMLEngine.world import world
 from drqnMLEngine.DRQNbuyer import dqrnBuyer
 from drqnMLEngine.DRQNseller import dqrnSeller
-
+import copy
 
 class Trainer(object):
 
@@ -153,7 +153,7 @@ class Trainer(object):
             self.bB[i].reward = rewards_buyer[i]
             self.bB[i].terminal = done
         self.sBa.observation = obs_seller_
-        self.sBa.reward = rewards_seller
+        self.sBa.reward = copy.deepcopy(rewards_seller)
         self.sBa.terminal = done
 
         while True:
@@ -170,7 +170,7 @@ class Trainer(object):
                 self.sBa.action = np.zeros([self.Num_action*self.nSellers])
                 for i in range(self.nSellers):
                     self.sBa.action[random.randint(i*3, i*3+2)] = 1.0
-                    action_step = np.argmax(self.sBa.action[i*3:i*3+2])
+                    action_step = np.argmax(self.sBa.action[i*3:i*3+3])
                     actions_seller[i] = action_step
                 
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
@@ -181,7 +181,7 @@ class Trainer(object):
                     self.bB[i].reward = rewards_buyer[i]
                     self.bB[i].terminal = done
                 self.sBa.observation_next = obs_seller_
-                self.sBa.reward = rewards_seller
+                self.sBa.reward = copy.deepcopy(rewards_seller)
                 self.sBa.terminal = done
                 if self.bB[i].step % 100 == 0:
                     print('step: ' + str(self.bB[i].step) + ' / '  + 'state: ' + state)
@@ -202,7 +202,7 @@ class Trainer(object):
                     self.sBa.action = np.zeros([self.Num_action*self.nSellers])
                     for i in range(self.nSellers):
                         self.sBa.action[random.randint(i*3, i*3+2)] = 1.0
-                        action_step = np.argmax(self.sBa.action[i*3:i*3+2])
+                        action_step = np.argmax(self.sBa.action[i*3:i*3+3])
                         actions_seller[i] = action_step
 
                 else:
@@ -217,9 +217,8 @@ class Trainer(object):
                     Q_value = self.sBa.get_output(self.sBa.observation_set, self.Num_batch, self.step_size)
                     for i in range(self.nSellers):
                         self.sBa.action[i*3+np.argmax(Q_value[i*3:i*3+2])] = 1
-                        action_step = np.argmax(self.sBa.action[i*3:i*3+2])
+                        action_step = np.argmax(self.sBa.action[i*3:i*3+3])
                         actions_seller[i] = action_step
-                    print(Q_value)
                     
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
                     = self.world.step(actions_seller, actions_buyer)
@@ -228,7 +227,7 @@ class Trainer(object):
                     self.bB[i].reward = rewards_buyer[i]
                     self.bB[i].terminal = done
                 self.sBa.observation_next = obs_seller_
-                self.sBa.reward = rewards_seller
+                self.sBa.reward = copy.deepcopy(rewards_seller)
                 self.sBa.terminal = done
                 for i in range(self.nSellers):
                     self.performMiniBatching(self.bB[i])
