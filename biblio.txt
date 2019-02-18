@@ -393,7 +393,7 @@ NG002 implement save tomorrow
 
 gcloud ml-engine jobs submit training $JOB_NAME --module-name drqnMLEngine.task --job-dir $OUTPUT_PATH --package-path drqnMLEngine --region $REGION
 
-JOB_NAME=test8
+JOB_NAME=test18
 BUCKET_NAME=negoai204-mlengine
 REGION=europe-west1
 OUTPUT_PATH=gs://$BUCKET_NAME/output
@@ -412,7 +412,7 @@ gcloud ml-engine local train --module-name drqnMLEngine.task --job-dir $OUTPUT_P
 NG 004 auto tester and manual tester
 
 
-JOB_NAME=test18_gpu
+JOB_NAME=test21_gpu
 BUCKET_NAME=negoai204-mlengine
 REGION=europe-west1
 OUTPUT_PATH=gs://$BUCKET_NAME/$JOB_NAME/output
@@ -687,3 +687,16 @@ PASS BY REFERENCE LULLLLLLL
 17/2/2019
 
 localtest19 started, with -300 reward
+
+
+
+18/2/2019
+
+sent to test19gpu - after +1 fix
+
+$ gcloud ml-engine jobs stream-logs test21_gpu
+
+
+
+
+

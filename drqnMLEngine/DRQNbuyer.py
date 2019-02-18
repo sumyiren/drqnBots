@@ -64,7 +64,7 @@ class dqrnBuyer(object):
             self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , flatten_size])
     
             with tf.variable_scope('network'):
-                self.cell = tf.nn.rnn_cell.LSTMCell(num_units = lstm_size, state_is_tuple = True)
+                self.cell = tf.contrib.rnn.BasicLSTMCell(num_units = lstm_size, state_is_tuple = True)
                 self.rnn_out, self.rnn_state = tf.nn.dynamic_rnn(inputs = self.x_rnn, cell = self.cell, dtype = tf.float32)
     
             # Vectorization
