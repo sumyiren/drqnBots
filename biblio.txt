@@ -682,3 +682,8 @@ float system wonky, change back to integers, but 1 seller 3 buyers still
 11/2/2019
 PASS BY REFERENCE LULLLLLLL
 
+
+
+17/2/2019
+
+localtest19 started, with -300 reward
