@@ -216,7 +216,7 @@ class Trainer(object):
                     self.sBa.action = np.zeros([self.Num_action*self.nSellers])
                     Q_value = self.sBa.get_output(self.sBa.observation_set, self.Num_batch, self.step_size)
                     for i in range(self.nSellers):
-                        self.sBa.action[i*3+np.argmax(Q_value[i*3:i*3+2])] = 1
+                        self.sBa.action[i*3+np.argmax(Q_value[i*3:i*3+3])] = 1
                         action_step = np.argmax(self.sBa.action[i*3:i*3+3])
                         actions_seller[i] = action_step
                     

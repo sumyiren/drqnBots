@@ -22,6 +22,7 @@ class sellerEnv(gym.Env):
         self.askingprice = askingprice
         self.minprice = minprice
         self.timeLeft = totalTime
+        self.totalTime = totalTime
 #        self.starttime = time.time()
 
         # self.action_space = spaces.Discrete(5) #less, more, the same
@@ -78,7 +79,7 @@ class sellerEnv(gym.Env):
                     
                     
             if sellerask <=0:
-                reward += -2
+                reward = -self.totalTime*2
                 
         else:
             if sellerask < self.minprice:

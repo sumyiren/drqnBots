@@ -18,7 +18,7 @@ class buyerEnv(gym.Env):
         self.askingprice = askingprice
         self.maxprice = maxprice
         self.timeLeft = totalTime
-
+        self.totalTime = totalTime
         self.viewer = None
         self.state = None, None, self.maxprice, self.timeLeft, False
         
@@ -63,7 +63,7 @@ class buyerEnv(gym.Env):
 
                 
             if buyerask <= 0:
-                reward += -2
+                reward = -self.totalTime*2
                 
         else:
 #                
