@@ -73,7 +73,6 @@ class world():
         for i in range(self.nSellers):
             state, done = self.buyerEnvs[i].step(actions_buyer[i], actions_seller[i])
             self.buyerStates[i] = state
-
         
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
@@ -84,7 +83,7 @@ class world():
             self.buyerRewards[i] = reward
 
         if done: 
-            self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
+            self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards, self.sellerStackStates)
                 
         return self.sellerStackStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
@@ -108,11 +107,12 @@ class world():
             reward = self.buyerEnvs[valPos].calcReward(self.buyerStates[valPos][0], self.buyerStates[valPos][1], True)
             self.buyerRewards[valPos] = reward
 
-    def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
+    def calcFinalSellerReward(self, sellerReward, sellerStackStates): #actually no need return since pbr, but for clarity
         maxSellerReward = max(sellerReward)
         if maxSellerReward >= 0:
             for i in range(len(sellerReward)):
-                sellerReward[i] = maxSellerReward
+                if sellerStackStates[i*2] > 0:
+                    sellerReward[i] = maxSellerReward
         return sellerReward
 
 #    def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
