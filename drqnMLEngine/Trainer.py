@@ -30,7 +30,7 @@ class Trainer(object):
         self.Final_epsilon = 0.01
 
         self.Num_replay_memory = 2000000
-        self.Num_start_training = 100000
+        self.Num_start_training = 5000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
@@ -219,7 +219,7 @@ class Trainer(object):
                         self.sBa.action[i*3+np.argmax(Q_value[i*3:i*3+3])] = 1
                         action_step = np.argmax(self.sBa.action[i*3:i*3+3])
                         actions_seller[i] = action_step
-                    
+                    print(Q_value)
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
                     = self.world.step(actions_seller, actions_buyer)
                 for i in range(self.nSellers):

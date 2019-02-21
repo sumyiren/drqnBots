@@ -55,8 +55,8 @@ class dqrnBuyer(object):
             # Input 
             self.x = tf.placeholder(tf.float32, shape = [None, 4], name="x")
     
-            self.w_fc = self.weight_variable([lstm_size, Num_action])
-            self.b_fc = self.bias_variable([Num_action])
+            self.w_fc = self.weight_variable('_w_fc1', [lstm_size, Num_action])
+            self.b_fc = self.bias_variable('_b_fc1',[Num_action])
     
             self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
             self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
@@ -91,11 +91,11 @@ class dqrnBuyer(object):
 
 
     # Initialize weights and bias
-    def weight_variable(self, shape):
-        return tf.Variable(self.xavier_initializer(shape))
-
-    def bias_variable(self, shape):
-        return tf.Variable(self.xavier_initializer(shape))
+    def weight_variable(self, name, shape):
+        return tf.get_variable(name, shape = shape, initializer = tf.contrib.layers.xavier_initializer())
+    
+    def bias_variable(self,name, shape):
+        return tf.get_variable(name, shape = shape, initializer = tf.contrib.layers.xavier_initializer())
 
     # Xavier Weights initializer
     def xavier_initializer(self, shape):

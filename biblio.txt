@@ -704,3 +704,13 @@ $ gcloud ml-engine jobs stream-logs test22_gpu
 sent to test22gpu - after 0 check (give -300 if still below 0)
 
 
+20/2/2019
+
+need a rethink, the Q-values are a wave - not discrete values - 3 of them should be independent
+
+
+21/2/2019
+
+Had a think at work today. Essentially, return to 3 independent sellers, but use teamSpirit to combine them. With regards to the timing issue, over a long time horizon, a small 1 step should not affect the long term thinking of the system. This is how it works for openai5 per say.
+
+In order to do this, suggest one change [NG022] change from == to +1-1 for rewards to count as a success

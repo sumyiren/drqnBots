@@ -58,8 +58,8 @@ class dqrnSeller(object):
             # Input
             self.x = tf.placeholder(tf.float32, shape = [None, self.flatten_size], name="x")
     
-            self.w_fc = self.weight_variable([lstm_size, Num_action*self.nSellers])
-            self.b_fc = self.bias_variable([Num_action*self.nSellers])
+            self.w_fc = self.weight_variable('_w_fc1', [lstm_size, Num_action*self.nSellers])
+            self.b_fc = self.bias_variable('_b_fc1',[Num_action*self.nSellers])
     
             self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
             self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
@@ -67,7 +67,7 @@ class dqrnSeller(object):
             self.x_rnn = tf.reshape(self.x,[-1, self.rnn_step_size , self.flatten_size])
     
             with tf.variable_scope('network'):
-                self.cell = tf.contrib.rnn.BasicLSTMCell(num_units = lstm_size, state_is_tuple = True)
+                self.cell = tf.nn.rnn_cell.LSTMCell(num_units = lstm_size, state_is_tuple = True)
                 self.rnn_out, self.rnn_state = tf.nn.dynamic_rnn(inputs = self.x_rnn, cell = self.cell, dtype = tf.float32)
     
             # Vectorization
@@ -90,11 +90,11 @@ class dqrnSeller(object):
 
 
     # Initialize weights and bias
-    def weight_variable(self, shape):
-        return tf.Variable(self.xavier_initializer(shape))
-
-    def bias_variable(self, shape):
-        return tf.Variable(self.xavier_initializer(shape))
+    def weight_variable(self, name, shape):
+        return tf.get_variable(name, shape = shape, initializer = tf.contrib.layers.xavier_initializer())
+    
+    def bias_variable(self,name, shape):
+        return tf.get_variable(name, shape = shape, initializer = tf.contrib.layers.xavier_initializer())
 
     # Xavier Weights initializer
     def xavier_initializer(self, shape):
