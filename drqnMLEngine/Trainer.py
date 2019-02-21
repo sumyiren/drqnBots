@@ -20,14 +20,15 @@ class Trainer(object):
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
         self.max_steps = 150
-        self.n_episode = 4050
+        self.n_episode = 5050
 
         # Parameter setting
         self.Num_action = 3
         self.Gamma = 0.99
         self.Learning_rate = 0.00025
-        self.Epsilon = 0.1
+        self.Epsilon = 0.2 #super greedy policy
         self.Final_epsilon = 0.01
+        self.Epsilon_epsilon = (self.Epsilon - self.Final_epsilon)/self.n_episode
 
         self.Num_replay_memory = 2000000
         self.Num_start_training = 100000
@@ -224,7 +225,7 @@ class Trainer(object):
                         self.sB[i].action[np.argmax(Q_value)] = 1
                         action_step = np.argmax(self.sB[i].action)
                         actions_seller[i] = action_step
-
+                        
                 obs_seller_, obs_buyer_, rewards_seller, rewards_buyer, done \
                     = self.world.step(actions_seller, actions_buyer)
                     
@@ -308,7 +309,9 @@ class Trainer(object):
                 if self.bB[0].step > self.Num_start_training:
                     self.episode_no = self.episode_no + 1
                     self.teamSpirit += self.teamSpirit_epsilon
+                    self.Epsilon -= self.Epsilon_epsilon
                     self.world.teamSpirit = self.teamSpirit
+                    print(self.Epsilon)
                 
                 
         print('FINISHED')
