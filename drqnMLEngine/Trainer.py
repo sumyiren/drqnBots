@@ -311,7 +311,6 @@ class Trainer(object):
                     self.teamSpirit += self.teamSpirit_epsilon
                     self.Epsilon -= self.Epsilon_epsilon
                     self.world.teamSpirit = self.teamSpirit
-                    print(self.Epsilon)
                 
                 
         print('FINISHED')

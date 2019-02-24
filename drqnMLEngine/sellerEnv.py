@@ -64,7 +64,7 @@ class sellerEnv(gym.Env):
         
         
         if done:
-            if abs(sellerask - buyerask) < 1 :
+            if abs(sellerask - buyerask) <= 1 :
                 
                 if sellerask < self.minprice:
                     reward += 0#-1 * abs(sellerask - self.minprice)

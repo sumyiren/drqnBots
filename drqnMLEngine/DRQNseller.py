@@ -24,7 +24,7 @@ Num_episode_plot = 30
 
 # DRQN Parameters
 #step_size = 4
-lstm_size = 512
+lstm_size = 256
 flatten_size = (2*nSellers)+2
 
 class dqrnSeller(object):

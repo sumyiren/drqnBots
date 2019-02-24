@@ -50,7 +50,7 @@ class buyerEnv(gym.Env):
         reward = 0
         
         if done:
-            if abs(buyerask - sellerask) < 1:
+            if abs(buyerask - sellerask) <= 1:
                 if buyerask > self.maxprice:
                     reward += 0#-1 * abs(buyerask - self.maxprice)
                 elif (buyerask <= self.maxprice and buyerask > self.askingprice):
