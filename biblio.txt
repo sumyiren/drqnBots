@@ -717,3 +717,11 @@ In order to do this, suggest one change [NG022] change from == to +1-1 for rewar
 
 
 localtest20 - annealed teamSpirit and random +1-1reward range 5050
+
+
+24/2/2019
+
+train katas while the thing is training - dont be lazy
+
+
+reward structure with teamwork must change abit, must reference to constant plane [NG023] localtest21

@@ -50,13 +50,17 @@ class buyerEnv(gym.Env):
         reward = 0
         
         if done:
-            if abs(buyerask - sellerask) <= 1:
-                if buyerask > self.maxprice:
-                    reward += 0#-1 * abs(buyerask - self.maxprice)
-                elif (buyerask <= self.maxprice and buyerask > self.askingprice):
-                    reward += abs(buyerask - self.maxprice)
-                elif buyerask <= self.askingprice:
+            if abs(buyerask - sellerask) <= 1: #avoid negative rewards here
+#                if buyerask > self.maxprice:
+#                    reward += 0#-1 * abs(buyerask - self.maxprice)
+#                elif (buyerask <= self.maxprice and buyerask > self.askingprice):
+#                    reward += abs(buyerask - self.maxprice)
+#                elif buyerask <= self.askingprice:
+#                    reward += 2* abs(buyerask - self.askingprice)
+                if buyerask <= self.askingprice:
                     reward += 2* abs(buyerask - self.askingprice)
+                else:
+                    reward += 0.1* abs(buyerask - self.askingprice)
                     
             else:
                 reward += -1 * abs(buyerask - sellerask)

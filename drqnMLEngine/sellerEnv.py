@@ -66,12 +66,17 @@ class sellerEnv(gym.Env):
         if done:
             if abs(sellerask - buyerask) <= 1 :
                 
-                if sellerask < self.minprice:
-                    reward += 0#-1 * abs(sellerask - self.minprice)
-                elif (sellerask >= self.minprice and sellerask < self.askingprice):
-                    reward += abs(sellerask- self.minprice)
-                elif sellerask >= self.askingprice:
+#                if sellerask < self.minprice:
+#                    reward += 0#-1 * abs(sellerask - self.minprice)
+#                elif (sellerask >= self.minprice and sellerask < self.askingprice):
+#                    reward += abs(sellerask- self.minprice)
+#                elif sellerask >= self.askingprice:
+#                    reward += 2* abs(sellerask - self.askingprice)
+                    
+                if sellerask >= self.askingprice:
                     reward += 2* abs(sellerask - self.askingprice)
+                else:
+                    reward += 0.1* abs(sellerask - self.askingprice)
                 
             else:
                 reward += -1 * abs(sellerask - buyerask)
