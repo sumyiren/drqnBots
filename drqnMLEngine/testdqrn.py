@@ -44,8 +44,8 @@ step_size = 50
 sess=tf.Session()   
 #First let's load meta graph and restore weights
 
-saver = tf.train.import_meta_graph('../output/localtest12/model-2000.meta')
-saver.restore(sess, '../output/localtest12/model-2000')
+saver = tf.train.import_meta_graph('../output/localtest23/model-5000.meta')
+saver.restore(sess, '../output/localtest23/model-5000')
 
 sB = []
 bB = []
