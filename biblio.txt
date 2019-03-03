@@ -393,7 +393,7 @@ NG002 implement save tomorrow
 
 gcloud ml-engine jobs submit training $JOB_NAME --module-name drqnMLEngine.task --job-dir $OUTPUT_PATH --package-path drqnMLEngine --region $REGION
 
-JOB_NAME=test8
+JOB_NAME=test18
 BUCKET_NAME=negoai204-mlengine
 REGION=europe-west1
 OUTPUT_PATH=gs://$BUCKET_NAME/output
@@ -412,7 +412,7 @@ gcloud ml-engine local train --module-name drqnMLEngine.task --job-dir $OUTPUT_P
 NG 004 auto tester and manual tester
 
 
-JOB_NAME=test18_gpu
+JOB_NAME=test24_gpu
 BUCKET_NAME=negoai204-mlengine
 REGION=europe-west1
 OUTPUT_PATH=gs://$BUCKET_NAME/$JOB_NAME/output
@@ -433,6 +433,7 @@ been on this problem the whole day....no progress
 
 2/1/2019
 
+download
 gsutil cp -r $OUTPUT_PATH ./
 
 
@@ -456,6 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
+OUTPUT_PATH=./output/localtest20
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -678,5 +680,48 @@ float system wonky, change back to integers, but 1 seller 3 buyers still
 
 
 
+11/2/2019
+PASS BY REFERENCE LULLLLLLL
 
 
+
+17/2/2019
+
+localtest19 started, with -300 reward
+
+
+
+18/2/2019
+
+sent to test21gpu - after +1 fix - tested to 2500
+
+$ gcloud ml-engine jobs stream-logs test22_gpu
+
+
+
+19/2/2019
+
+sent to test22gpu - after 0 check (give -300 if still below 0)
+
+
+20/2/2019
+
+need a rethink, the Q-values are a wave - not discrete values - 3 of them should be independent
+
+
+21/2/2019
+
+Had a think at work today. Essentially, return to 3 independent sellers, but use teamSpirit to combine them. With regards to the timing issue, over a long time horizon, a small 1 step should not affect the long term thinking of the system. This is how it works for openai5 per say.
+
+In order to do this, suggest one change [NG022] change from == to +1-1 for rewards to count as a success
+
+
+localtest20 - annealed teamSpirit and random +1-1reward range 5050
+
+
+24/2/2019
+
+train katas while the thing is training - dont be lazy
+
+
+reward structure with teamwork must change abit, must reference to constant plane [NG023] localtest21
