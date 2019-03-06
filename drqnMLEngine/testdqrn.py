@@ -13,7 +13,7 @@ test.restart()
 done = False
 
 while not done:
-    obs_buyer, obs_seller, done = test.stepAction()
+    obs_seller, obs_buyer, done = test.stepAction()
     print('-------------------------------------')
     for i in range(test.nSellers):
         print('nSeller:'+str(i))

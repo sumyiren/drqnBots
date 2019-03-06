@@ -1,9 +1,13 @@
 from testClass import testClass
-
+import pickle
 
 test = testClass()
 dealCounter = 0
-numTests = 100
+numTests = 1000
+
+startArrays = []
+endArrays = []
+
 def checkDealMade(obs_seller):
     dealsMade = False
     for i in range(test.nSellers):
@@ -15,12 +19,16 @@ def checkDealMade(obs_seller):
 for j in range(numTests):
     print('Testing '+str(j))
     done = False
-    test.restart()
+    obs_seller, obs_buyer = test.restart()
+    startArrays.append({'seller':obs_seller, 'buyer':obs_buyer})
     while not done:
-        obs_buyer, obs_seller, done = test.stepAction()
+        obs_seller, obs_buyer, done = test.stepAction()
         if done:
-            if checkDealMade(obs_seller):
-                dealCounter += 1
+            endArrays.append({'seller':obs_seller, 'buyer':obs_buyer})
             
-        
-print('Total Deals out of ' + str(numTests) + ': ' + str(dealCounter))
+with open('./testResults/multitestdqrn1000.pickle', 'wb') as handle:
+    pickle.dump({'start':startArrays, 'end':endArrays}, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+#with open('filename.pickle', 'rb') as handle:
+#    b = pickle.load(handle)        
+#print('Total Deals out of ' + str(numTests) + ': ' + str(dealCounter))

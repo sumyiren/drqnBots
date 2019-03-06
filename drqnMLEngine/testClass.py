@@ -75,7 +75,7 @@ class testClass():
             self.sB[i].observation_set = []
             for j in range(step_size):
                 self.sB[i].observation_set.append(self.sB[i].observation)
-    
+        return self.obs_seller, self.obs_buyer 
 #        #sellers
 #        self.actions_seller = [world.action_space.sample()]*self.nSellers
 #        for i in range(self.nSellers):
@@ -140,7 +140,7 @@ class testClass():
         
         self.obs_buyer = obs_buyer_
         self.obs_seller = obs_seller_
-        return obs_buyer_, obs_seller_, done
+        return obs_seller_, obs_buyer_, done
     
     
     
