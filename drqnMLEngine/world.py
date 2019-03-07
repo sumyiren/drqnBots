@@ -33,8 +33,8 @@ class world():
         self.teamSpirit = teamSpirit
 
         for i in range(self.nSellers):
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, 0))
-            self.buyerEnvs.append(buyerEnv(self.totalTime,  self.askingPrice, 0))
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.askingPrice, 0))
+            self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, self.askingPrice, 0))
 
     def flattenList(self, list):
         flat_list = [item for sublist in list for item in sublist]
@@ -128,7 +128,7 @@ class world():
         return sellerReward
         
     def reset(self):
-        n1 = 0
+        n1 = 1
         n2 = 150.0
         
         self.sellerStartingPrice = random.randint(n1,n2)
@@ -138,10 +138,10 @@ class world():
         self.buyerEnvs = []
         for i in range(self.nSellers):
             self.buyerStartingPrice = random.randint(n1,n2)
-            self.maxPrice = self.buyerStartingPrice + random.randint(0,n2-self.buyerStartingPrice-1)
+            self.maxPrice = self.buyerStartingPrice + random.randint(0,n2-self.buyerStartingPrice+1)
             
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.minPrice))
-            self.buyerEnvs.append(buyerEnv(self.totalTime, self.buyerStartingPrice, self.maxPrice))
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.minPrice))
+            self.buyerEnvs.append(buyerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.maxPrice))
 
         self.sellerStates = []
         self.sellerStackStates = []

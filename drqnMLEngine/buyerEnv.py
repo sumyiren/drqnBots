@@ -14,7 +14,8 @@ class buyerEnv(gym.Env):
     }
     AVAIL_TORQUE = [-1., 0., +1]
 
-    def __init__(self, totalTime, buyerStartingPrice, maxprice):
+    def __init__(self, totalTime, sellerStartingPrice, buyerStartingPrice, maxprice):
+        self.sellerStartingPrice = sellerStartingPrice
         self.buyerStartingPrice = buyerStartingPrice
         self.maxprice = maxprice
         self.timeLeft = totalTime
@@ -80,7 +81,7 @@ class buyerEnv(gym.Env):
         return reward
 
     def reset(self):
-        self.state = [self.buyerStartingPrice, self.buyerStartingPrice, self.maxprice, self.timeLeft]
+        self.state = [self.sellerStartingPrice, self.buyerStartingPrice, self.maxprice, self.timeLeft]
         return np.array(self.state)
 
 #    def close(self):

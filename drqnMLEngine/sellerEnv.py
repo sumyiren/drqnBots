@@ -18,8 +18,9 @@ class sellerEnv(gym.Env):
     }
     AVAIL_TORQUE = [-1., 0., +1]
 
-    def __init__(self, totalTime, sellerAskingPrice, minprice):
-        self.sellerAskingPrice = sellerAskingPrice
+    def __init__(self, totalTime, sellerStartingPrice, buyerStartingPrice, minprice):
+        self.sellerStartingPrice = sellerStartingPrice
+        self.buyerStartingPrice = buyerStartingPrice
         self.minprice = minprice
         self.timeLeft = totalTime
 #        self.starttime = time.time()
@@ -68,15 +69,15 @@ class sellerEnv(gym.Env):
                 
 #                if sellerask < self.minprice:
 #                    reward += 0#-1 * abs(sellerask - self.minprice)
-#                elif (sellerask >= self.minprice and sellerask < self.sellerAskingPrice):
+#                elif (sellerask >= self.minprice and sellerask < self.sellerStartingPrice):
 #                    reward += abs(sellerask- self.minprice)
-#                elif sellerask >= self.sellerAskingPrice:
-#                    reward += 2* abs(sellerask - self.sellerAskingPrice)
+#                elif sellerask >= self.sellerStartingPrice:
+#                    reward += 2* abs(sellerask - self.sellerStartingPrice)
                     
-                if sellerask >= self.sellerAskingPrice:
-                    reward += 2* abs(sellerask - self.sellerAskingPrice)
+                if sellerask >= self.sellerStartingPrice:
+                    reward += 2* abs(sellerask - self.sellerStartingPrice)
                 else:
-                    reward += 0.1* abs(sellerask - self.sellerAskingPrice)
+                    reward += 0.1* abs(sellerask - self.sellerStartingPrice)
                 
             else:
                 reward += -1 * abs(sellerask - buyerask)
@@ -95,7 +96,7 @@ class sellerEnv(gym.Env):
         
 
     def reset(self):
-        self.state = [self.sellerAskingPrice, self.sellerAskingPrice, self.minprice, self.timeLeft]
+        self.state = [self.sellerStartingPrice, self.buyerStartingPrice, self.minprice, self.timeLeft]
         return self.state
 
 #    def close(self):
