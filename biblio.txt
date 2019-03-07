@@ -725,3 +725,26 @@ train katas while the thing is training - dont be lazy
 
 
 reward structure with teamwork must change abit, must reference to constant plane [NG023] localtest21
+
+
+4/3/2019
+
+NG024 - testing quality of models!
+
+
+6/3/2019
+
+84/100 models reach deal!
+
+
+7/3/2019
+
+[NG025] - localtest24
+buyers should be able to set their starting value and max value
+sellers should be able to set their starting value and end value
+
+
+             80              90                             100                             110
+|------------|---------------|---------------|---------------|---------------|---------------|---------------|
+     minPrice(seller)   startingprice(buyer)         startingprice(seller)                  maxPrice(buyer)
+
