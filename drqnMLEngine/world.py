@@ -138,7 +138,7 @@ class world():
         self.buyerEnvs = []
         for i in range(self.nSellers):
             self.buyerStartingPrice = random.randint(n1,n2)
-            self.maxPrice = self.buyerStartingPrice + random.randint(0,n2-self.maxPrice-1)
+            self.maxPrice = self.buyerStartingPrice + random.randint(0,n2-self.buyerStartingPrice-1)
             
             self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.minPrice))
             self.buyerEnvs.append(buyerEnv(self.totalTime, self.buyerStartingPrice, self.maxPrice))
