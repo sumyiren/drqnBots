@@ -128,18 +128,20 @@ class world():
         return sellerReward
         
     def reset(self):
-        n1 = 50.0
-        n2 = 100.0
-        n3 = 1.0
-        n4 = 49.0
-        self.askingPrice = random.randint(n1,n2)
-        minPrice = self.askingPrice - random.randint(n3,n4)
+        n1 = 0
+        n2 = 150.0
+        
+        self.sellerStartingPrice = random.randint(n1,n2)
+        self.minPrice = self.sellerStartingPrice - random.randint(0,self.sellerStartingPrice-1)
+        
         self.sellerEnvs = []
         self.buyerEnvs = []
         for i in range(self.nSellers):
-            maxPrice = self.askingPrice + random.randint(n3,n4)
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, minPrice))
-            self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, maxPrice))
+            self.buyerStartingPrice = random.randint(n1,n2)
+            self.maxPrice = self.buyerStartingPrice + random.randint(0,n2-self.maxPrice-1)
+            
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.minPrice))
+            self.buyerEnvs.append(buyerEnv(self.totalTime, self.buyerStartingPrice, self.maxPrice))
 
         self.sellerStates = []
         self.sellerStackStates = []
