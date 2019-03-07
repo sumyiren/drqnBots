@@ -3,7 +3,7 @@ import pickle
 
 test = testClass()
 dealCounter = 0
-numTests = 1000
+numTests = 1001
 
 startArrays = []
 endArrays = []
@@ -26,7 +26,7 @@ for j in range(numTests):
         if done:
             endArrays.append({'seller':obs_seller, 'buyer':obs_buyer})
             
-with open('./testResults/multitestdqrn1000.pickle', 'wb') as handle:
+with open('./testResults/multitestdqrn1001.pickle', 'wb') as handle:
     pickle.dump({'start':startArrays, 'end':endArrays}, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 #with open('filename.pickle', 'rb') as handle:

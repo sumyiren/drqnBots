@@ -736,6 +736,7 @@ NG024 - testing quality of models!
 
 84/100 models reach deal!
 
+
 7/3/2019
 
 [NG025] - localtest24
@@ -745,5 +746,7 @@ sellers should be able to set their starting value and end value
 
              80              90                             100                             110
 |------------|---------------|---------------|---------------|---------------|---------------|---------------|
+
      minPrice(seller)   startingprice(buyer)         startingprice(seller)                  maxPrice(buyer)
+
 

@@ -43,18 +43,19 @@ class testClass():
         self.graph = tf.get_default_graph()
         self.world = world(self.nSellers, max_steps, teamSpirit)
         for i in range(self.nSellers):
-            j = i
+            j = 0
             self.bB.append(dqrnBuyer('BuyerAgent'+str(j)))
             self.bB[i].x = self.graph.get_tensor_by_name('BuyerAgent'+str(j)+'/x:0')
             self.bB[i].rnn_batch_size = self.graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_batch_size:0')
             self.bB[i].rnn_step_size  = self.graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_step_size:0')
             self.bB[i].output = self.graph.get_tensor_by_name('BuyerAgent'+str(j)+'/op_to_restore:0')
         
-            self.sB.append(dqrnSeller('SellerAgent'+str(j)))
-            self.sB[i].x = self.graph.get_tensor_by_name('SellerAgent'+str(j)+'/x:0')
-            self.sB[i].rnn_batch_size = self.graph.get_tensor_by_name('SellerAgent'+str(j)+'/rnn_batch_size:0')
-            self.sB[i].rnn_step_size  = self.graph.get_tensor_by_name('SellerAgent'+str(j)+'/rnn_step_size:0')
-            self.sB[i].output = self.graph.get_tensor_by_name('SellerAgent'+str(j)+'/op_to_restore:0')
+            k = i
+            self.sB.append(dqrnSeller('SellerAgent'+str(k)))
+            self.sB[i].x = self.graph.get_tensor_by_name('SellerAgent'+str(k)+'/x:0')
+            self.sB[i].rnn_batch_size = self.graph.get_tensor_by_name('SellerAgent'+str(k)+'/rnn_batch_size:0')
+            self.sB[i].rnn_step_size  = self.graph.get_tensor_by_name('SellerAgent'+str(k)+'/rnn_step_size:0')
+            self.sB[i].output = self.graph.get_tensor_by_name('SellerAgent'+str(k)+'/op_to_restore:0')
 
 
     def resetWorld(self, world):
