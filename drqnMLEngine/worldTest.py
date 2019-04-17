@@ -33,8 +33,8 @@ class world():
         self.teamSpirit = teamSpirit
 
         for i in range(self.nSellers):
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, 0))
-            self.buyerEnvs.append(buyerEnv(self.totalTime,  self.askingPrice, 0))
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.askingPrice, 0))
+            self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, self.askingPrice, 0))
 
     def flattenList(self, list):
         flat_list = [item for sublist in list for item in sublist]
@@ -113,26 +113,36 @@ class world():
             reward = self.buyerEnvs[valPos].calcReward(self.buyerStates[valPos][0], self.buyerStates[valPos][1], True)
             self.buyerRewards[valPos] = reward
 
+#    def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
+#        maxSellerReward = max(sellerReward)
+#        if maxSellerReward >= 0:
+#            for i in range(len(sellerReward)):
+#                sellerReward[i] = maxSellerReward
+#        return sellerReward
 
-    def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
-        avgSellerReward = np.average(sellerReward)
+    def calcFinalSellerReward(self, sellerReward): #annealed - when near end, the top seller benefits everyone
+#        avgSellerReward = np.average(sellerReward)
+        maxSellerReward = max(sellerReward)
         for i in range(len(sellerReward)):
-            sellerReward[i] = self.teamSpirit*avgSellerReward + (1-self.teamSpirit)*sellerReward[i]
+            sellerReward[i] = self.teamSpirit*maxSellerReward + (1-self.teamSpirit)*sellerReward[i]
         return sellerReward
         
     def reset(self):
-        n1 = 50.0
-        n2 = 100.0
-        n3 = 1.0
-        n4 = 49.0
-        self.askingPrice = random.randint(n1,n2)
-        minPrice = self.askingPrice - random.randint(n3,n4)
+        n1 = 1
+        n2 = 150.0
+        
+        self.sellerStartingPrice = 100
+        self.minPrice = 80
+        
         self.sellerEnvs = []
         self.buyerEnvs = []
+        self.buyerStartingPrice = 40
         for i in range(self.nSellers):
-            maxPrice = self.askingPrice + random.randint(n3,n4)
-            self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, minPrice))
-            self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, maxPrice))
+            
+            self.maxPrice = self.buyerStartingPrice + random.randint(0,n2-self.buyerStartingPrice+1)
+            
+            self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.minPrice))
+            self.buyerEnvs.append(buyerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.maxPrice))
 
         self.sellerStates = []
         self.sellerStackStates = []
