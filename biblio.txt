@@ -750,3 +750,70 @@ sellers should be able to set their starting value and end value
      minPrice(seller)   startingprice(buyer)         startingprice(seller)                  maxPrice(buyer)
 
 
+11/3/2019
+
+server is being written, hopefully can deploy to heroku soon for user testing
+
+
+20/3/2019
+
+export YOURAPPLICATION_SETTINGS=/home/sumyiren/Documents/Development/NegoAICodebase/config.cfg
+
+
+30/3/2019
+
+what is my requirement?
+
+sellerbot determines the minPrice and the startingPrice via randomised - but only shows the startingPrice to buyers
+
+1 external player - playing against 2 other buyer bots, against a bot seller
+
+external player determines the startingprice and maxprice - initial condition replicated for buyer bots
+
+- first proof - bots can negotiate better than humans given the same intiial conditions
+
+
+iron, money, pack, checkflights, checkpack, checkmap
+
+
+check out: human negotiators rarely approach nash equilibrium, unless experienced 
+actually monkeys do better than us :) -joeyyap 2019
+
+
+
+11/4/2019
+
+long month - swiss j ams mum - time to get back to work work
+
+
+13/4/2019
+
+redesign reward structure - ensure lower values for seller do not receive a beneficial reward
+
+
+14/4/2019
+
+first off, testing repeatability and teamwork
+
+my actions do affect the others
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,12 +7,16 @@ Created on Wed Mar  6 20:25:23 2019
 """
 import pickle
 
-with open('multitestdqrn1001.pickle', 'rb') as handle:
+with open('multitestdqrn20.pickle', 'rb') as handle:
     testRes = pickle.load(handle) 
 
-startArrays = testRes['start']
-endArrays = testRes['end']  
 
+see = 12
+startArrays = testRes['start']
+print(startArrays[see]['buyer'])
+endArrays = testRes['end']  
+print('-----------------------')
+print(endArrays[see]['buyer'])
 nTest = len(endArrays)
 nSellers = len(endArrays[0]['buyer'])
 

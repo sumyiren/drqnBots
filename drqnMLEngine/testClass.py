@@ -36,14 +36,14 @@ class testClass():
     def __init__(self):
         self.nSellers = 3
         self.sess=tf.Session()   
-        self.saver = tf.train.import_meta_graph('../output/localtest23/model-5000.meta')
-        self.saver.restore(self.sess, '../output/localtest23/model-5000')
+        self.saver = tf.train.import_meta_graph('../output/localtest24/model-3500.meta')
+        self.saver.restore(self.sess, '../output/localtest24/model-3500')
         self.sB = []
         self.bB = []
         self.graph = tf.get_default_graph()
         self.world = world(self.nSellers, max_steps, teamSpirit)
         for i in range(self.nSellers):
-            j = 0
+            j = i
             self.bB.append(dqrnBuyer('BuyerAgent'+str(j)))
             self.bB[i].x = self.graph.get_tensor_by_name('BuyerAgent'+str(j)+'/x:0')
             self.bB[i].rnn_batch_size = self.graph.get_tensor_by_name('BuyerAgent'+str(j)+'/rnn_batch_size:0')
