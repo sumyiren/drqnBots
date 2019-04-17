@@ -6,7 +6,7 @@
 
 import gym
 import numpy as np
-
+import math
 class buyerEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -59,9 +59,9 @@ class buyerEnv(gym.Env):
 #                elif buyerask <= self.buyerStartingPrice:
 #                    reward += 2* abs(buyerask - self.buyerStartingPrice)
                 if buyerask <= self.buyerStartingPrice:
-                    reward += 2* abs(buyerask - self.buyerStartingPrice)
+                    reward += 7*math.exp((self.buyerStartingPrice - buyerask)/5)
                 else:
-                    reward += 0.1* abs(buyerask - self.buyerStartingPrice)
+                    reward += 5*math.exp((self.buyerStartingPrice - buyerask)/5)
                     
             else:
                 reward += -1 * abs(buyerask - sellerask)

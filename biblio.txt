@@ -798,6 +798,9 @@ first off, testing repeatability and teamwork
 my actions do affect the others
 
 
+17/4/2019
+[NG025] fix reward structure and train localtest25
+
 
 
 

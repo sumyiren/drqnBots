@@ -11,6 +11,7 @@ Created on Fri Jul 27 15:18:58 2018
 
 import gym
 from gym.utils import seeding
+import math
 class sellerEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -75,9 +76,9 @@ class sellerEnv(gym.Env):
 #                    reward += 2* abs(sellerask - self.sellerStartingPrice)
                     
                 if sellerask >= self.sellerStartingPrice:
-                    reward += 2* abs(sellerask - self.sellerStartingPrice)
+                    reward += 7*math.exp((sellerask - self.sellerStartingPrice)/5)
                 else:
-                    reward += 0.1* abs(sellerask - self.sellerStartingPrice)
+                    reward += 5*math.exp((sellerask-self.sellerStartingPrice)/5)
                 
             else:
                 reward += -1 * abs(sellerask - buyerask)
