@@ -76,10 +76,10 @@ class sellerEnv(gym.Env):
 #                    reward += 2* abs(sellerask - self.sellerStartingPrice)
                     
                 if sellerask >= self.sellerStartingPrice:
-                    reward += 7*math.exp((sellerask - self.sellerStartingPrice)/5)
+                    reward += 3 + 2*abs(sellerask - self.sellerStartingPrice)
                 else:
-                    reward += 5*math.exp((sellerask-self.sellerStartingPrice)/5)
-                
+                    reward += 3*math.exp((sellerask-self.sellerStartingPrice)/10)
+                    
             else:
                 reward += -1 * abs(sellerask - buyerask)
                     

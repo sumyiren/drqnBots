@@ -120,11 +120,16 @@ class world():
 #                sellerReward[i] = maxSellerReward
 #        return sellerReward
 
-    def calcFinalSellerReward(self, sellerReward): #annealed - when near end, the top seller benefits everyone
+    def calcFinalSellerReward(self, sellerReward): #annealed - when near end, the top seller benefits everyone - but if no deal, negative reward high
 #        avgSellerReward = np.average(sellerReward)
         maxSellerReward = max(sellerReward)
-        for i in range(len(sellerReward)):
-            sellerReward[i] = self.teamSpirit*maxSellerReward + (1-self.teamSpirit)*sellerReward[i]
+        minSellerReward = min(sellerReward)
+        if maxSellerReward > 0:
+            for i in range(len(sellerReward)):
+                sellerReward[i] = self.teamSpirit*maxSellerReward + (1-self.teamSpirit)*sellerReward[i]
+        else:
+            for i in range(len(sellerReward)):
+                sellerReward[i] = self.teamSpirit*minSellerReward + (1-self.teamSpirit)*sellerReward[i]
         return sellerReward
         
     def reset(self):

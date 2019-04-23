@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest20
+OUTPUT_PATH=./output/localtest25
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -799,12 +799,14 @@ my actions do affect the others
 
 
 17/4/2019
-[NG025] fix reward structure and train localtest25
+glaring mistake
+[NG025] fix reward structure and train localtest25 
 
 
 
+23/4/2019
 
-
+need to punish seller more (as they benefit more from teamwork)
 
 
 
