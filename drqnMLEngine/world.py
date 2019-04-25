@@ -134,7 +134,7 @@ class world():
         
     def reset(self):
         n1 = 1
-        n2 = 150.0
+        n2 = 200
         
         self.sellerStartingPrice = random.randint(n1,n2)
         self.minPrice = self.sellerStartingPrice - random.randint(0,self.sellerStartingPrice-1)
@@ -142,7 +142,7 @@ class world():
         self.sellerEnvs = []
         self.buyerEnvs = []
         for i in range(self.nSellers):
-            self.buyerStartingPrice = random.randint(n1,n2)
+            self.buyerStartingPrice = random.randint(n1, self.sellerStartingPrice)
             self.maxPrice = self.buyerStartingPrice + random.randint(0,n2-self.buyerStartingPrice+1)
             
             self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.minPrice))

@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest25
+OUTPUT_PATH=./output/localtest26
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -808,6 +808,11 @@ glaring mistake
 
 need to punish seller more (as they benefit more from teamwork)
 
+
+
+25/4/2019
+
+the seller offers first, there buyer starting price should always be lower, raised to 200
 
 
 
