@@ -59,10 +59,10 @@ class buyerEnv(gym.Env):
 #                elif buyerask <= self.buyerStartingPrice:
 #                    reward += 2* abs(buyerask - self.buyerStartingPrice)
                 
-                if buyerask <= self.buyerStartingPrice:
-                    reward += 3 + 2*abs(buyerask - self.buyerStartingPrice)
+                if buyerask <= self.maxprice:
+                    reward += 3 + 2*abs(buyerask - self.maxprice)
                 else:
-                    reward += 3*math.exp((self.buyerStartingPrice - buyerask)/10)
+                    reward += 3*math.exp((self.maxprice - buyerask)/10)
 
                    
             else:
