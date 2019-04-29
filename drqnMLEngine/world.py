@@ -84,9 +84,9 @@ class world():
         for i in range(self.nSellers):
             
             reward = self.sellerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.sellerRewards[i] = reward
+            self.sellerRewards[i] = reward/(self.maxPrice - self.minPrice) #normaliztion
             reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.buyerRewards[i] = reward
+            self.buyerRewards[i] = reward/(self.maxPrice - self.minPrice) #normalization
 
         if done: 
             self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)

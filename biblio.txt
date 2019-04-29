@@ -820,6 +820,10 @@ the seller offers first, there buyer starting price should always be lower, rais
 should be compared via min and maxprice, as these are the values that actually matter  - localtest28
 
 
+29/4/2019
+
+difference needs to be normalized by dividing by the min-max range
+
 
 
 
