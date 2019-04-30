@@ -84,15 +84,23 @@ class world():
         for i in range(self.nSellers):
             
             reward = self.sellerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.sellerRewards[i] = reward/(self.maxPrice - self.minPrice) #normaliztion
+            self.sellerRewards[i] = self.normalizeReward(reward, self.sellerEnvs[i].maxPrice, self.buyerEnvs[i].minPrice) #normaliztion
             reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.buyerRewards[i] = reward/(self.maxPrice - self.minPrice) #normalization
+            self.buyerRewards[i] = self.normalizeReward(reward, self.sellerEnvs[i].maxPrice, self.buyerEnvs[i].minPrice) #normalization
 
         if done: 
             self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
                 
         return self.sellerStackStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
+
+    def normalizeReward(self, reward, maxPrice, minPrice):
+        denom = abs(maxPrice-minPrice)
+        if (denom) == 0:
+            return reward/(denom+1)
+        else:
+            return reward/(denom)
+            
         
     #deprecated - unused
     def calcFinalReward(self):
@@ -128,22 +136,24 @@ class world():
             for i in range(len(sellerReward)):
                 sellerReward[i] = self.teamSpirit*maxSellerReward + (1-self.teamSpirit)*sellerReward[i]
         else:
+            #punish seller hard if no deal made
             for i in range(len(sellerReward)):
                 sellerReward[i] = self.teamSpirit*minSellerReward + (1-self.teamSpirit)*sellerReward[i]
         return sellerReward
         
     def reset(self):
-        n1 = 1
+        n1 = 2
         n2 = 200
         
-        self.sellerStartingPrice = random.randint(n1,n2)
-        self.minPrice = self.sellerStartingPrice - random.randint(0,self.sellerStartingPrice-1)
+        self.minPrice = random.randint(n1,n2)
+        self.sellerStartingPrice = self.minPrice + random.randint(0, n2-self.minPrice)
         
         self.sellerEnvs = []
         self.buyerEnvs = []
         for i in range(self.nSellers):
-            self.buyerStartingPrice = random.randint(n1, self.sellerStartingPrice)
-            self.maxPrice = self.buyerStartingPrice + random.randint(0,n2-self.buyerStartingPrice+1)
+            
+            self.maxPrice = random.randint(n1,n2)
+            self.buyerStartingPrice = random.randint(0, self.maxPrice - 1)
             
             self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.minPrice))
             self.buyerEnvs.append(buyerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.maxPrice))

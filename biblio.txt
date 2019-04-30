@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest27
+OUTPUT_PATH=./output/localtest29
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -822,7 +822,8 @@ should be compared via min and maxprice, as these are the values that actually m
 
 29/4/2019
 
-difference needs to be normalized by dividing by the min-max range
+difference needs to be normalized by dividing by the min-max range - localtest29
+
 
 
 
