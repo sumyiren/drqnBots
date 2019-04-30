@@ -99,9 +99,9 @@ class world():
         if reward > 0:
             denom = abs(maxPrice-minPrice)
             if (denom) == 0:
-                return reward/(denom+1)*
+                return reward/(denom+1)*self.maxRange
             else:
-                return reward/(denom)
+                return reward/(denom)*self.maxRange
         else:
             return reward
             
