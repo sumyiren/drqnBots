@@ -19,10 +19,10 @@ class sellerEnv(gym.Env):
     }
     AVAIL_TORQUE = [-1., 0., +1]
 
-    def __init__(self, totalTime, sellerStartingPrice, buyerStartingPrice, minprice):
+    def __init__(self, totalTime, sellerStartingPrice, buyerStartingPrice, minPrice):
         self.sellerStartingPrice = sellerStartingPrice
         self.buyerStartingPrice = buyerStartingPrice
-        self.minprice = minprice
+        self.minPrice = minPrice
         self.timeLeft = totalTime
 #        self.starttime = time.time()
 
@@ -31,7 +31,7 @@ class sellerEnv(gym.Env):
 
         self.seed()
         self.viewer = None
-        self.state = None, None, self.minprice, self.timeLeft, False
+        self.state = None, None, self.minPrice, self.timeLeft, False
         
 
         self.steps_beyond_done = None
@@ -42,7 +42,7 @@ class sellerEnv(gym.Env):
 
     def step(self, action_seller, action_buyer):
         state = self.state
-        sellerask, buyerask, minprice, timeLeft = state
+        sellerask, buyerask, minPrice, timeLeft = state
         if action_seller != None:
             plusminus_seller = self.AVAIL_TORQUE[action_seller]
             plusminus_buyer = self.AVAIL_TORQUE[action_buyer]
@@ -54,7 +54,7 @@ class sellerEnv(gym.Env):
         timeLeft -= 1
         done = timeLeft <= 0 
         done = bool(done)
-        self.state = [sellerask, buyerask, minprice, timeLeft]
+        self.state = [sellerask, buyerask, minPrice, timeLeft]
 #        reward = self.calcReward(sellerask, buyerask, done) 
 #        print("SellerBot")
 #        print("sellerask: "+ str(sellerask))
@@ -68,17 +68,17 @@ class sellerEnv(gym.Env):
         if done:
             if abs(sellerask - buyerask) <= 1 :
                 
-#                if sellerask < self.minprice:
-#                    reward += 0#-1 * abs(sellerask - self.minprice)
-#                elif (sellerask >= self.minprice and sellerask < self.sellerStartingPrice):
-#                    reward += abs(sellerask- self.minprice)
+#                if sellerask < self.minPrice:
+#                    reward += 0#-1 * abs(sellerask - self.minPrice)
+#                elif (sellerask >= self.minPrice and sellerask < self.sellerStartingPrice):
+#                    reward += abs(sellerask- self.minPrice)
 #                elif sellerask >= self.sellerStartingPrice:
 #                    reward += 2* abs(sellerask - self.sellerStartingPrice)
                     
-                if sellerask >= self.minprice:
-                    reward += 3 + 2*abs(sellerask - self.minprice)
+                if sellerask >= self.minPrice:
+                    reward += abs(sellerask - self.minPrice)
                 else:
-                    reward += 3*math.exp((sellerask-self.minprice)/10)
+                    reward += math.exp((sellerask-self.minPrice)/10)
                     
             else:
                 reward += -1 * abs(sellerask - buyerask)
@@ -88,7 +88,7 @@ class sellerEnv(gym.Env):
                 reward += -2
                 
         else:
-            if sellerask < self.minprice:
+            if sellerask < self.minPrice:
                 reward += -1
             if sellerask <=0:
                 reward += -1
@@ -97,7 +97,7 @@ class sellerEnv(gym.Env):
         
 
     def reset(self):
-        self.state = [self.sellerStartingPrice, self.buyerStartingPrice, self.minprice, self.timeLeft]
+        self.state = [self.sellerStartingPrice, self.buyerStartingPrice, self.minPrice, self.timeLeft]
         return self.state
 
 #    def close(self):

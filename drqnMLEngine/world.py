@@ -25,6 +25,7 @@ class world():
         self.askingPrice = 5.0
         self.nSellers = nSellers
         self.totalTime = maxSteps
+        self.maxRange = maxSteps
         self.nSellers = nSellers
         self.maxBuyerReward = -100
         self.action_space = spaces.Discrete(3) #less, more, the same
@@ -84,9 +85,9 @@ class world():
         for i in range(self.nSellers):
             
             reward = self.sellerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.sellerRewards[i] = self.normalizeReward(reward, self.sellerEnvs[i].maxPrice, self.buyerEnvs[i].minPrice) #normaliztion
+            self.sellerRewards[i] = self.normalizeRewardIfPositive(reward, self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice) #normaliztion
             reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.buyerRewards[i] = self.normalizeReward(reward, self.sellerEnvs[i].maxPrice, self.buyerEnvs[i].minPrice) #normalization
+            self.buyerRewards[i] = self.normalizeRewardIfPositive(reward, self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice) #normalization
 
         if done: 
             self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
@@ -94,12 +95,15 @@ class world():
         return self.sellerStackStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
 
-    def normalizeReward(self, reward, maxPrice, minPrice):
-        denom = abs(maxPrice-minPrice)
-        if (denom) == 0:
-            return reward/(denom+1)
+    def normalizeRewardIfPositive(self, reward, maxPrice, minPrice):
+        if reward > 0:
+            denom = abs(maxPrice-minPrice)
+            if (denom) == 0:
+                return reward/(denom+1)*
+            else:
+                return reward/(denom)
         else:
-            return reward/(denom)
+            return reward
             
         
     #deprecated - unused

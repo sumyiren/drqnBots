@@ -14,14 +14,14 @@ class buyerEnv(gym.Env):
     }
     AVAIL_TORQUE = [-1., 0., +1]
 
-    def __init__(self, totalTime, sellerStartingPrice, buyerStartingPrice, maxprice):
+    def __init__(self, totalTime, sellerStartingPrice, buyerStartingPrice, maxPrice):
         self.sellerStartingPrice = sellerStartingPrice
         self.buyerStartingPrice = buyerStartingPrice
-        self.maxprice = maxprice
+        self.maxPrice = maxPrice
         self.timeLeft = totalTime
 
         self.viewer = None
-        self.state = None, None, self.maxprice, self.timeLeft, False
+        self.state = None, None, self.maxPrice, self.timeLeft, False
         
 
         self.steps_beyond_done = None
@@ -30,7 +30,7 @@ class buyerEnv(gym.Env):
         
     def step(self, action_buyer, action_seller):
         state = self.state
-        sellerask, buyerask, maxprice, timeLeft = state
+        sellerask, buyerask, maxPrice, timeLeft = state
         if action_buyer != None:
             plusminus_buyer = self.AVAIL_TORQUE[action_buyer]
             plusminus_seller = self.AVAIL_TORQUE[action_seller]
@@ -43,7 +43,7 @@ class buyerEnv(gym.Env):
         timeLeft -= 1
         done = timeLeft <= 0 
         done = bool(done)
-        self.state = (sellerask, buyerask, maxprice, timeLeft)       
+        self.state = (sellerask, buyerask, maxPrice, timeLeft)       
         return np.array(self.state), done
 
     def calcReward(self, sellerask, buyerask , done):
@@ -52,17 +52,17 @@ class buyerEnv(gym.Env):
         
         if done:
             if abs(buyerask - sellerask) <= 1: #avoid negative rewards here
-#                if buyerask > self.maxprice:
-#                    reward += 0#-1 * abs(buyerask - self.maxprice)
-#                elif (buyerask <= self.maxprice and buyerask > self.buyerbuyerStartingPrice):
-#                    reward += abs(buyerask - self.maxprice)
+#                if buyerask > self.maxPrice:
+#                    reward += 0#-1 * abs(buyerask - self.maxPrice)
+#                elif (buyerask <= self.maxPrice and buyerask > self.buyerbuyerStartingPrice):
+#                    reward += abs(buyerask - self.maxPrice)
 #                elif buyerask <= self.buyerStartingPrice:
 #                    reward += 2* abs(buyerask - self.buyerStartingPrice)
                 
-                if buyerask <= self.maxprice:
-                    reward += 3 + 2*abs(buyerask - self.maxprice)
+                if buyerask <= self.maxPrice:
+                    reward += abs(buyerask - self.maxPrice)
                 else:
-                    reward += 3*math.exp((self.maxprice - buyerask)/10)
+                    reward += math.exp((self.maxPrice - buyerask)/10)
 
                    
             else:
@@ -74,7 +74,7 @@ class buyerEnv(gym.Env):
                 
         else:
 #                
-            if buyerask > self.maxprice:
+            if buyerask > self.maxPrice:
                 reward += -1
             if buyerask <=0:
                 reward += -1
@@ -83,7 +83,7 @@ class buyerEnv(gym.Env):
         return reward
 
     def reset(self):
-        self.state = [self.sellerStartingPrice, self.buyerStartingPrice, self.maxprice, self.timeLeft]
+        self.state = [self.sellerStartingPrice, self.buyerStartingPrice, self.maxPrice, self.timeLeft]
         return np.array(self.state)
 
 #    def close(self):

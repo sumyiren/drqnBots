@@ -824,6 +824,9 @@ should be compared via min and maxprice, as these are the values that actually m
 
 difference needs to be normalized by dividing by the min-max range - localtest29
 
+30/4/2019
+
+if negative reward, do not divide, help converge faster
 
 
 
