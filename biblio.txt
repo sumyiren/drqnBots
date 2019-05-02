@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest29
+OUTPUT_PATH=./output/localtest30
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -829,7 +829,13 @@ difference needs to be normalized by dividing by the min-max range - localtest29
 if negative reward, do not divide, help converge faster
 
 
+2/5/2019
 
+bad deal worse than no deal? 
+bad deal = good deal for one bad for other
+
+bad deal rejection should be rewarded with positive rewards
+only negative rewards when theres a no deal on a possible deal
 
 
 

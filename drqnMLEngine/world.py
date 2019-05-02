@@ -84,10 +84,8 @@ class world():
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
             
-            reward = self.sellerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.sellerRewards[i] = self.normalizeRewardIfPositive(reward, self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice) #normaliztion
-            reward = self.buyerEnvs[i].calcReward(self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.buyerRewards[i] = self.normalizeRewardIfPositive(reward, self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice) #normalization
+            self.sellerRewards[i] = self.calcSellerReward(self.buyerStates[i][0], self.buyerStates[i][1], self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice,  done)
+            self.buyerRewards[i] = self.calcBuyerReward(self.buyerStates[i][0], self.buyerStates[i][1], self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice,  done)
 
         if done: 
             self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
@@ -95,43 +93,74 @@ class world():
         return self.sellerStackStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
         
 
-    def normalizeRewardIfPositive(self, reward, maxPrice, minPrice):
-        if reward > 0:
-            denom = abs(maxPrice-minPrice)
-            if (denom) == 0:
-                return reward/(denom+1)*self.maxRange
-            else:
-                return reward/(denom)*self.maxRange
+    def calcSellerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
+        reward = 0
+        goodDeal = maxPrice >= minPrice
+        priceRange = maxPrice-minPrice
+        if priceRange == 0:
+            priceRange = 1
+        
+        if done:
+            if goodDeal:
+                if abs(sellerask - buyerask) <= 1 :
+                    #deal made - for a good deal, but ready to punish if a bad deal for a party
+                    reward += (sellerask - minPrice)/priceRange*self.maxRange #
+                else:
+                    #no deal made, when it is a good deal makeable, punish by the range difference
+                    reward += (-1 * abs(sellerask - buyerask))/priceRange*self.maxRange
+                    
+            else: #baddeal
+                if abs(sellerask - buyerask) <= 1 :
+                    #deal made - for a bad deal, punish
+                    reward += (sellerask - minPrice)/priceRange*self.maxRange #
+                else:
+                    #no deal made, when it is a baa deal makeable, reward given
+                    reward += (1 * abs(sellerask - buyerask))/priceRange*self.maxRange
+                
         else:
-            return reward
+            if sellerask < self.minPrice:
+                reward += -1
+            if sellerask <=0:
+                reward += -1
+
+        return reward
+        
+
+    def calcBuyerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
+        reward = 0
+        goodDeal = maxPrice >= minPrice
+        priceRange = maxPrice-minPrice
+        if priceRange == 0:
+            priceRange = 1
+        
+        if done:
             
+            if goodDeal:
+                if abs(buyerask - sellerask) <= 1 :
+                    #deal made - for a good deal, but ready to punish if a bad deal for a party
+                    reward += (maxPrice - buyerask)/priceRange*self.maxRange #
+                else:
+                    #no deal made, when it is a good deal makeable, punish by the range difference
+                    reward += (-1 * abs(sellerask - buyerask))/priceRange*self.maxRange
+           
+            else: #baddeal
+                if abs(sellerask - buyerask) <= 1 :
+                    #deal made - for a bad deal, punish
+                    reward += (maxPrice - buyerask)/priceRange*self.maxRange #
+                else:
+                    #no deal made, when it is a baa deal makeable, reward given
+                    reward += (1 * abs(sellerask - buyerask))/priceRange*self.maxRange
+                
+        else:
+            if buyerask > self.maxPrice:
+                reward += -1
+            if buyerask <=0:
+                reward += -1
+
+                
+        return reward
+      
         
-    #deprecated - unused
-    def calcFinalReward(self):
-        maxVal = 0 #max sellerask value
-        valPos = None # position of the max sellerask value
-        self.sellerRewards = [0]*self.nSellers
-        self.buyerRewards = [0]*self.nSellers
-        
-        for i in range(self.nSellers):
-            if self.buyerStates[i][0] == self.buyerStates[i][1]:
-                if self.buyerStates[i][0] > maxVal:
-                    valPos = i
-                    maxVal = self.buyerStates[i][0]
-
-        if valPos is not None:
-            reward = self.sellerEnvs[valPos].calcReward(self.buyerStates[valPos][0], self.buyerStates[valPos][1], True)
-            self.sellerRewards[valPos] = reward
-            reward = self.buyerEnvs[valPos].calcReward(self.buyerStates[valPos][0], self.buyerStates[valPos][1], True)
-            self.buyerRewards[valPos] = reward
-
-#    def calcFinalSellerReward(self, sellerReward): #actually no need return since pbr, but for clarity
-#        maxSellerReward = max(sellerReward)
-#        if maxSellerReward >= 0:
-#            for i in range(len(sellerReward)):
-#                sellerReward[i] = maxSellerReward
-#        return sellerReward
-
     def calcFinalSellerReward(self, sellerReward): #annealed - when near end, the top seller benefits everyone - but if no deal, negative reward high
 #        avgSellerReward = np.average(sellerReward)
         maxSellerReward = max(sellerReward)
