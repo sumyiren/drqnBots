@@ -96,7 +96,7 @@ class world():
     def calcSellerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
         reward = 0
         goodDeal = maxPrice >= minPrice
-        priceRange = maxPrice-minPrice
+        priceRange = abs(maxPrice-minPrice)
         if priceRange == 0:
             priceRange = 1
         
@@ -115,7 +115,7 @@ class world():
                     reward += (sellerask - minPrice)/priceRange*self.maxRange #
                 else:
                     #no deal made, when it is a baa deal makeable, reward given
-                    reward += (1 * abs(sellerask - buyerask))/priceRange*self.maxRange
+                    reward += priceRange
                 
         else:
             if sellerask < self.minPrice:
@@ -129,13 +129,14 @@ class world():
     def calcBuyerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
         reward = 0
         goodDeal = maxPrice >= minPrice
-        priceRange = maxPrice-minPrice
+        priceRange = abs(maxPrice-minPrice)
         if priceRange == 0:
             priceRange = 1
         
         if done:
             
             if goodDeal:
+                print('goodDeal')
                 if abs(buyerask - sellerask) <= 1 :
                     #deal made - for a good deal, but ready to punish if a bad deal for a party
                     reward += (maxPrice - buyerask)/priceRange*self.maxRange #
@@ -144,12 +145,13 @@ class world():
                     reward += (-1 * abs(sellerask - buyerask))/priceRange*self.maxRange
            
             else: #baddeal
+                print('badDeal')
                 if abs(sellerask - buyerask) <= 1 :
                     #deal made - for a bad deal, punish
                     reward += (maxPrice - buyerask)/priceRange*self.maxRange #
                 else:
                     #no deal made, when it is a baa deal makeable, reward given
-                    reward += (1 * abs(sellerask - buyerask))/priceRange*self.maxRange
+                    reward += priceRange
                 
         else:
             if buyerask > self.maxPrice:
