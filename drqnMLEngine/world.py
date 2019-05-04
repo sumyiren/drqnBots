@@ -100,10 +100,10 @@ class world():
         if done:
             if goodDeal:
                 if abs(sellerask - buyerask) <= 1 :
-                    if sellerask >= self.minprice:
-                        reward += 3 + 2*abs(sellerask - self.minprice)
+                    if sellerask >= minPrice:
+                        reward += 3 + 2*abs(sellerask - minPrice)
                     else:
-                        reward += 3*math.exp((sellerask-self.minprice)/10)
+                        reward += 3*math.exp((sellerask- minPrice)/10)
                         
                 else:
                     reward += -1 * abs(sellerask - buyerask)
@@ -135,10 +135,10 @@ class world():
                 print('goodDeal')
                 if abs(buyerask - sellerask) <= 1 :
                     #deal made - for a good deal, but ready to punish if a bad deal for a party
-                    if buyerask <= self.maxprice:
-                        reward += 3 + 2*abs(buyerask - self.maxprice)
+                    if buyerask <= maxPrice:
+                        reward += 3 + 2*abs(buyerask - maxPrice)
                     else:
-                        reward += 3*math.exp((self.maxprice - buyerask)/10)
+                        reward += 3*math.exp((maxPrice - buyerask)/10)
                 else:
                     #no deal made, when it is a good deal makeable, punish by the range difference
                     reward += -1 * abs(sellerask - buyerask)
