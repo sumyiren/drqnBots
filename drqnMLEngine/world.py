@@ -96,26 +96,25 @@ class world():
     def calcSellerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
         reward = 0
         goodDeal = maxPrice >= minPrice
-        priceRange = abs(maxPrice-minPrice)
-        if priceRange == 0:
-            priceRange = 1
         
         if done:
             if goodDeal:
                 if abs(sellerask - buyerask) <= 1 :
-                    #deal made - for a good deal, but ready to punish if a bad deal for a party
-                    reward += (sellerask - minPrice)/priceRange*self.maxRange #
+                    if sellerask >= self.minprice:
+                        reward += 3 + 2*abs(sellerask - self.minprice)
+                    else:
+                        reward += 3*math.exp((sellerask-self.minprice)/10)
+                        
                 else:
-                    #no deal made, when it is a good deal makeable, punish by the range difference
-                    reward += (-1 * abs(sellerask - buyerask))/priceRange*self.maxRange
+                    reward += -1 * abs(sellerask - buyerask)
                     
             else: #baddeal
                 if abs(sellerask - buyerask) <= 1 :
                     #deal made - for a bad deal, punish
-                    reward += (sellerask - minPrice)/priceRange*self.maxRange #
+                    reward += (sellerask - minPrice)
                 else:
                     #no deal made, when it is a baa deal makeable, reward given
-                    reward += 30
+                    reward += 0
                 
         else:
             if sellerask < self.minPrice:
@@ -129,9 +128,6 @@ class world():
     def calcBuyerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
         reward = 0
         goodDeal = maxPrice >= minPrice
-        priceRange = abs(maxPrice-minPrice)
-        if priceRange == 0:
-            priceRange = 1
         
         if done:
             
@@ -139,19 +135,22 @@ class world():
                 print('goodDeal')
                 if abs(buyerask - sellerask) <= 1 :
                     #deal made - for a good deal, but ready to punish if a bad deal for a party
-                    reward += (maxPrice - buyerask)/priceRange*self.maxRange #
+                    if buyerask <= self.maxprice:
+                        reward += 3 + 2*abs(buyerask - self.maxprice)
+                    else:
+                        reward += 3*math.exp((self.maxprice - buyerask)/10)
                 else:
                     #no deal made, when it is a good deal makeable, punish by the range difference
-                    reward += (-1 * abs(sellerask - buyerask))/priceRange*self.maxRange
+                    reward += -1 * abs(sellerask - buyerask)
            
             else: #baddeal
                 print('badDeal')
                 if abs(sellerask - buyerask) <= 1 :
                     #deal made - for a bad deal, punish
-                    reward += (maxPrice - buyerask)/priceRange*self.maxRange #
+                    reward += (maxPrice - buyerask)
                 else:
                     #no deal made, when it is a baa deal makeable, reward given
-                    reward += 30
+                    reward += 0
                 
         else:
             if buyerask > self.maxPrice:

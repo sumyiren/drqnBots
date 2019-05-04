@@ -20,7 +20,7 @@ class Trainer(object):
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
         self.max_steps = 200
-        self.n_episode = 5550
+        self.n_episode = 8550
 
         # Parameter setting
         self.Num_action = 3
@@ -30,8 +30,8 @@ class Trainer(object):
         self.Final_epsilon = 0.01
         self.Epsilon_epsilon = (self.Epsilon - self.Final_epsilon)/self.n_episode
 
-        self.Num_replay_memory = 2000000
-        self.Num_start_training = 100000
+        self.Num_replay_memory = 10000000
+        self.Num_start_training = 500000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
