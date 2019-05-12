@@ -10,6 +10,7 @@ envs = []
 algorithm = 'DRQN'
 
 # Parameter setting 
+nSellers = 3
 Num_action = 3
 Gamma = 0.99
 Learning_rate = 0.00025
@@ -24,7 +25,7 @@ Num_episode_plot = 30
 # DRQN Parameters
 #step_size = 4
 lstm_size = 256
-flatten_size = 4
+flatten_size = (nSellers-1)+4
 
 class dqrnBuyer(object):
     def __init__(self, scope):
@@ -53,7 +54,7 @@ class dqrnBuyer(object):
         with tf.variable_scope(self.scope):
 
             # Input 
-            self.x = tf.placeholder(tf.float32, shape = [None, 4], name="x")
+            self.x = tf.placeholder(tf.float32, shape = [None, flatten_size], name="x")
     
             self.w_fc = self.weight_variable([lstm_size, Num_action])
             self.b_fc = self.bias_variable([Num_action])

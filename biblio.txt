@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest31
+OUTPUT_PATH=./output/localtest32
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -747,7 +747,7 @@ sellers should be able to set their starting value and end value
              80              90                             100                             110
 |------------|---------------|---------------|---------------|---------------|---------------|---------------|
 
-     minPrice(seller)   startingprice(buyer)         startingprice(seller)                  maxPrice(buyer)
+     minPrice(seller)   startingprice(buyerask)     startingprice(sellerask)             maxPrice(buyer)
 
 
 11/3/2019
@@ -839,9 +839,31 @@ only negative rewards when theres a no deal on a possible deal
 
 
 
+4/5/2019
+
+add pressure to buyer - needs to know of other buyers in market, (use average price perhaps?)
 
 
+6/5/2019
 
+need a new revamp of the reward structure completely
+
+how to add pressure to buyers - make them know there are other buyers in the market,
+
+provide buyers with numbers of prices of other ppl - i.e [15 74 75 76 78 200]
+                                                                 ^  ^  
+                                                                b2  b3
+
+reward structure also edited: for buyers - 0 if deal unmade, negative if bad deal made, positive if good deal, go back to simplification
+
+[Test32] The pressure paradox
+
+
+7/5/2019
+
+90 200
+
+first price auction?
 
 
 

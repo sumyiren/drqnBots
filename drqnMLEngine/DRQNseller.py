@@ -55,7 +55,7 @@ class dqrnSeller(object):
 
         with tf.variable_scope(self.scope):
             # Input
-            self.x = tf.placeholder(tf.float32, shape = [None, (2*nSellers)+2], name="x")
+            self.x = tf.placeholder(tf.float32, shape = [None, flatten_size], name="x")
     
             self.w_fc = self.weight_variable([lstm_size, Num_action])
             self.b_fc = self.bias_variable([Num_action])

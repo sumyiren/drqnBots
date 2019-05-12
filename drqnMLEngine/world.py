@@ -65,6 +65,18 @@ class world():
             temp.extend(self.sellerStates[i][-2:])
             sellerStackStates.append(temp)
         return sellerStackStates
+    
+    def getBuyerStackStates(self):
+        buyerStackStates = []
+        for i in range(self.nSellers):
+            temp = []
+            temp.extend(self.buyerStates[i][0:2])
+            for j in range(self.nSellers):
+                if i != j:
+                    temp.extend(self.buyerStates[j][1:2])
+            temp.extend(self.buyerStates[i][-2:])
+            buyerStackStates.append(temp)
+        return buyerStackStates
         
 
     def step(self, actions_seller, actions_buyer):
@@ -75,6 +87,7 @@ class world():
             self.sellerStates[i] = state
 
         self.sellerStackStates = self.getSellerStackStates()
+        self.buyerStackStates = self.getBuyerStackStates()
         #do buyer step
         for i in range(self.nSellers):
             state, done = self.buyerEnvs[i].step(actions_buyer[i], actions_seller[i])
@@ -83,14 +96,14 @@ class world():
         
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
-            
             self.sellerRewards[i] = self.calcSellerReward(self.buyerStates[i][0], self.buyerStates[i][1], self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice,  done)
             self.buyerRewards[i] = self.calcBuyerReward(self.buyerStates[i][0], self.buyerStates[i][1], self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice,  done)
 
         if done: 
             self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards, self.sellerEnvs, self.buyerEnvs)
+            self.buyerRewards = self.calcFinalBuyerReward(self.buyerRewards, self.buyerStates )
                 
-        return self.sellerStackStates, self.buyerStates, self.sellerRewards, self.buyerRewards, done
+        return self.sellerStackStates, self.buyerStackStates, self.sellerRewards, self.buyerRewards, done
         
 
     def calcSellerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
@@ -98,26 +111,16 @@ class world():
         goodDeal = maxPrice >= minPrice
         
         if done:
-            if goodDeal:
-                if abs(sellerask - buyerask) <= 1 :
-                    if sellerask >= minPrice:
-                        reward += 3 + 2*abs(sellerask - minPrice)
-                    else:
-                        reward += 3*math.exp((sellerask- minPrice)/10)
-                        
-                else:
-                    reward += -1 * abs(sellerask - buyerask)
-                    
-            else: #baddeal
-                if abs(sellerask - buyerask) <= 1 :
-                    #deal made - for a bad deal, punish
-                    reward += (sellerask - minPrice)
-                else:
-                    #no deal made, when it is a baa deal makeable, reward given
+            if abs(sellerask - buyerask) <= 2 : #maybe 2? - deal made
+                reward += sellerask - minPrice
+            else:
+                if goodDeal: #gooddeal not made
+                    reward += -1 * abs(sellerask - buyerask)    
+                else: #bad deal not made - shouldnt punish
                     reward += 0
                 
         else:
-            if sellerask < self.minPrice:
+            if sellerask < minPrice:
                 reward += -1
             if sellerask <=0:
                 reward += -1
@@ -130,37 +133,39 @@ class world():
         goodDeal = maxPrice >= minPrice
         
         if done:
-            
-            if goodDeal:
-                print('goodDeal')
-                if abs(buyerask - sellerask) <= 1 :
-                    #deal made - for a good deal, but ready to punish if a bad deal for a party
-                    if buyerask <= maxPrice:
-                        reward += 3 + 2*abs(buyerask - maxPrice)
-                    else:
-                        reward += 3*math.exp((maxPrice - buyerask)/10)
-                else:
-                    #no deal made, when it is a good deal makeable, punish by the range difference
-                    reward += -1 * abs(sellerask - buyerask)
-           
-            else: #baddeal
-                print('badDeal')
-                if abs(sellerask - buyerask) <= 1 :
-                    #deal made - for a bad deal, punish
-                    reward += (maxPrice - buyerask)
-                else:
-                    #no deal made, when it is a baa deal makeable, reward given
+            if abs(sellerask - buyerask) <= 2 : #maybe 2? - deal made
+                reward += maxPrice - buyerask
+            else:
+                if goodDeal: #gooddeal not made
+                    reward += -1 * abs(sellerask - buyerask)    
+                else: #bad deal not made - shouldnt punish
                     reward += 0
                 
         else:
-            if buyerask > self.maxPrice:
+            if buyerask > maxPrice:
                 reward += -1
             if buyerask <=0:
                 reward += -1
 
-                
         return reward
-      
+        
+    
+    def calcFinalBuyerReward(self, buyerRewards, buyerStates):
+        currHighest = 0
+        currPos = None
+        for i in range(len(buyerRewards)):
+            if buyerRewards[i] > 0:
+                if buyerRewards[i] > currHighest:
+                    currHighest = buyerStates[i][1]
+                    currPos = i
+                buyerRewards[i] = 0
+        
+        if currPos is not None:
+            buyerRewards[currPos] = currHighest
+        
+        return buyerRewards
+
+        
         
     def calcFinalSellerReward(self, sellerRewards, sellerEnvs, buyerEnvs): 
         goodDealRewards = []
@@ -212,8 +217,9 @@ class world():
             self.buyerRewards.append(0)
         
         self.sellerStackStates = self.getSellerStackStates()
+        self.buyerStackStates = self.getBuyerStackStates()
         
-        return self.sellerStackStates, self.buyerStates
+        return self.sellerStackStates, self.buyerStackStates
         
 
     
