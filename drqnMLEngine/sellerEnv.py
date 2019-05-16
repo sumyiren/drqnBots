@@ -61,39 +61,39 @@ class sellerEnv(gym.Env):
 #        print("buyerask: "+ str(buyerask))
         return self.state, done
 
-    def calcReward(self, sellerask, buyerask , done):
-        reward = 0
-        
-        
-        if done:
-            if abs(sellerask - buyerask) <= 1 :
-                
-#                if sellerask < self.minPrice:
-#                    reward += 0#-1 * abs(sellerask - self.minPrice)
-#                elif (sellerask >= self.minPrice and sellerask < self.sellerStartingPrice):
-#                    reward += abs(sellerask- self.minPrice)
-#                elif sellerask >= self.sellerStartingPrice:
-#                    reward += 2* abs(sellerask - self.sellerStartingPrice)
-                    
-                if sellerask >= self.minPrice:
-                    reward += abs(sellerask - self.minPrice)
-                else:
-                    reward += math.exp((sellerask-self.minPrice)/10)
-                    
-            else:
-                reward += -1 * abs(sellerask - buyerask)
-                    
-                    
-            if sellerask <=0:
-                reward += -2
-                
-        else:
-            if sellerask < self.minPrice:
-                reward += -1
-            if sellerask <=0:
-                reward += -1
-
-        return reward
+#    def calcReward(self, sellerask, buyerask , done):
+#        reward = 0
+#        
+#        
+#        if done:
+#            if abs(sellerask - buyerask) <= 1 :
+#                
+##                if sellerask < self.minPrice:
+##                    reward += 0#-1 * abs(sellerask - self.minPrice)
+##                elif (sellerask >= self.minPrice and sellerask < self.sellerStartingPrice):
+##                    reward += abs(sellerask- self.minPrice)
+##                elif sellerask >= self.sellerStartingPrice:
+##                    reward += 2* abs(sellerask - self.sellerStartingPrice)
+#                    
+#                if sellerask >= self.minPrice:
+#                    reward += abs(sellerask - self.minPrice)
+#                else:
+#                    reward += math.exp((sellerask-self.minPrice)/10)
+#                    
+#            else:
+#                reward += -1 * abs(sellerask - buyerask)
+#                    
+#                    
+#            if sellerask <=0:
+#                reward += -2
+#                
+#        else:
+#            if sellerask < self.minPrice:
+#                reward += -1
+#            if sellerask <=0:
+#                reward += -1
+#
+#        return reward
         
 
     def reset(self):

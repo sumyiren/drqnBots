@@ -6,7 +6,6 @@ from drqnMLEngine.world import world
 from drqnMLEngine.DRQNbuyer import dqrnBuyer
 from drqnMLEngine.DRQNseller import dqrnSeller
 
-
 class Trainer(object):
 
     def __init__(self, args):
@@ -20,7 +19,7 @@ class Trainer(object):
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
         self.max_steps = 200
-        self.n_episode = 10550
+        self.n_episode = 5550
 
         # Parameter setting
         self.Num_action = 3
@@ -31,7 +30,7 @@ class Trainer(object):
         self.Epsilon_epsilon = (self.Epsilon - self.Final_epsilon)/self.n_episode
 
         self.Num_replay_memory = 10000000
-        self.Num_start_training = 500000
+        self.Num_start_training = 100000
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
@@ -265,12 +264,6 @@ class Trainer(object):
 
                 obs_seller, obs_buyer = self.resetWorld(world)
 
-                if self.count % 1 == 0:
-                    print('------------------------------------')
-                    print('Initial Conditions:' + str(self.count))
-                    print(obs_seller)
-                    print(obs_buyer)
-                self.count = self.count + 1
                 for i in range(self.nSellers):
 
                     if len(self.bB[i].episode_memory) > self.step_size:
@@ -298,7 +291,16 @@ class Trainer(object):
                     for j in range(self.step_size):
                         self.sB[i].observation_set.append(self.sB[i].observation)
                     self.sB[i].terminal = False
-
+                    
+                self.bB = self.scramble(self.bB) # seller 1 deals with buyer 1,2,3
+                
+                if self.count % 1 == 0:
+                    print('------------------------------------')
+                    print('Initial Conditions:' + str(self.count))
+                    for i in range(self.nSellers):
+                        print(self.bB[i].observation)
+                        print(self.sB[i].observation)
+                self.count = self.count + 1
 
                 self.isRandom = random.random() < self.Epsilon
  
@@ -315,7 +317,29 @@ class Trainer(object):
                 
         print('FINISHED')
                 
-
+    def scramble(self, bB):
+        bBFinal = [0]*3
+        choices = list(range(0,self.nSellers)) #[0,1,2]
+        for i in range(self.nSellers):
+            choiceIndex = random.choice(range(len(choices)))
+            bBIndex = choices[choiceIndex]
+            bBFinal[i] = bB[bBIndex]
+            del choices[choiceIndex] #[0,2]
+            
+        return bBFinal
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
 
 

@@ -37,9 +37,9 @@ class world():
             self.sellerEnvs.append(sellerEnv(self.totalTime, self.askingPrice, self.askingPrice, 0))
             self.buyerEnvs.append(buyerEnv(self.totalTime, self.askingPrice, self.askingPrice, 0))
 
-    def flattenList(self, list):
-        flat_list = [item for sublist in list for item in sublist]
-        return flat_list
+#    def flattenList(self, list):
+#        flat_list = [item for sublist in list for item in sublist]
+#        return flat_list
         
 #    def getSellerStackStates(self):
 #        sellerStackStates = []
@@ -192,15 +192,15 @@ class world():
         n1 = 2
         n2 = 200
         
-        self.minPrice = random.randint(n1,n2)
-        self.sellerStartingPrice = self.minPrice + random.randint(0, n2-self.minPrice)
+        self.minPrice = random.randint(n1,n2-1)
+        self.sellerStartingPrice = self.minPrice
         
         self.sellerEnvs = []
         self.buyerEnvs = []
         for i in range(self.nSellers):
             
-            self.maxPrice = random.randint(n1,n2)
-            self.buyerStartingPrice = random.randint(0, self.maxPrice - 1)
+            self.maxPrice = random.randint(self.minPrice,n2)
+            self.buyerStartingPrice = random.randint(0, self.minPrice - 1)
             
             self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.minPrice))
             self.buyerEnvs.append(buyerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.maxPrice))

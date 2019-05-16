@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest32
+OUTPUT_PATH=./output/localtest33
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -865,5 +865,16 @@ reward structure also edited: for buyers - 0 if deal unmade, negative if bad dea
 
 first price auction?
 
+
+16/5/2019
+
+[Test33] bot1 vs bot 1 2 3, also, find a way to reduce possibilities
+
+
+             80                             90                                              110
+|------------|---------------|---------------|---------------|---------------|---------------|---------------|
+
+   startingprice(buyerask)             minPrice(seller)                               maxPrice(buyer)
+                                  startingprice(sellerask)
 
 
