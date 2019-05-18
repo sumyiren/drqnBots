@@ -100,7 +100,7 @@ class world():
             self.buyerRewards[i] = self.calcBuyerReward(self.buyerStates[i][0], self.buyerStates[i][1], self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice,  done)
 
         if done: 
-            self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards, self.sellerEnvs, self.buyerEnvs)
+            self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
             self.buyerRewards = self.calcFinalBuyerReward(self.buyerRewards, self.buyerStates )
                 
         return self.sellerStackStates, self.buyerStackStates, self.sellerRewards, self.buyerRewards, done
@@ -165,28 +165,33 @@ class world():
         
         return buyerRewards
 
-        
-        
-    def calcFinalSellerReward(self, sellerRewards, sellerEnvs, buyerEnvs): 
-        goodDealRewards = []
+
+    def calcFinalSellerReward(self, sellerRewards):
+        maxSellerReward = max(sellerRewards)
         for i in range(len(sellerRewards)):
-            goodDeal = buyerEnvs[i].maxPrice >= sellerEnvs[i].minPrice
-            if goodDeal:
-                goodDealRewards.append(sellerRewards[i])
-        
-        #annealed - when near end, the top seller benefits everyone - but if no deal, negative reward high
-#        avgSellerReward = np.average(sellerReward)
-        if len(goodDealRewards):
-            maxSellerReward = max(goodDealRewards)
-            minSellerReward = min(goodDealRewards)
-            if maxSellerReward > 0:
-                for i in range(len(sellerRewards)):
-                    sellerRewards[i] = self.teamSpirit*maxSellerReward + (1-self.teamSpirit)*sellerRewards[i]
-            else:
-                #punish seller hard if no deal made
-                for i in range(len(sellerRewards)):
-                    sellerRewards[i] = self.teamSpirit*minSellerReward + (1-self.teamSpirit)*sellerRewards[i]
+            sellerRewards[i] = self.teamSpirit*maxSellerReward + (1-self.teamSpirit)*sellerRewards[i]
         return sellerRewards
+        
+#    def calcFinalSellerReward(self, sellerRewards, sellerEnvs, buyerEnvs): 
+#        goodDealRewards = []
+#        for i in range(len(sellerRewards)):
+#            goodDeal = buyerEnvs[i].maxPrice >= sellerEnvs[i].minPrice
+#            if goodDeal:
+#                goodDealRewards.append(sellerRewards[i])
+#        
+#        #annealed - when near end, the top seller benefits everyone - but if no deal, negative reward high
+##        avgSellerReward = np.average(sellerReward)
+#        if len(goodDealRewards):
+#            maxSellerReward = max(goodDealRewards)
+#            minSellerReward = min(goodDealRewards)
+#            if maxSellerReward > 0:
+#                for i in range(len(sellerRewards)):
+#                    sellerRewards[i] = self.teamSpirit*maxSellerReward + (1-self.teamSpirit)*sellerRewards[i]
+#            else:
+#                #punish seller hard if no deal made
+#                for i in range(len(sellerRewards)):
+#                    sellerRewards[i] = self.teamSpirit*minSellerReward + (1-self.teamSpirit)*sellerRewards[i]
+#        return sellerRewards
         
     def reset(self):
         n1 = 2
