@@ -86,14 +86,13 @@ class world():
             state, done = self.sellerEnvs[i].step(actions_seller[i], actions_buyer[i])
             self.sellerStates[i] = state
 
-        self.sellerStackStates = self.getSellerStackStates()
-        self.buyerStackStates = self.getBuyerStackStates()
         #do buyer step
         for i in range(self.nSellers):
             state, done = self.buyerEnvs[i].step(actions_buyer[i], actions_seller[i])
             self.buyerStates[i] = state
 
-        
+        self.sellerStackStates = self.getSellerStackStates()
+        self.buyerStackStates = self.getBuyerStackStates()   
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
             self.sellerRewards[i] = self.calcSellerReward(self.buyerStates[i][0], self.buyerStates[i][1], self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice,  done)
@@ -151,18 +150,16 @@ class world():
         
     
     def calcFinalBuyerReward(self, buyerRewards, buyerStates):
-        currHighest = 0
-        currPos = None
+        currHighestBuyerAsk = 0
+        currHighestReward = None
         for i in range(len(buyerRewards)):
             if buyerRewards[i] > 0:
-                if buyerRewards[i] > currHighest:
-                    currHighest = buyerStates[i][1]
-                    currPos = i
+                currHighestReward = buyerRewards[i]
                 buyerRewards[i] = 0
-        
-        if currPos is not None:
-            buyerRewards[currPos] = currHighest
-        
+                if buyerStates[i][1] > currHighestBuyerAsk:
+                    currHighestBuyerAsk = buyerStates[i][1]
+                    buyerRewards[i] = currHighestReward
+                    
         return buyerRewards
 
 
