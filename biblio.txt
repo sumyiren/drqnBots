@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest33
+OUTPUT_PATH=./output/localtest34
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -878,3 +878,14 @@ first price auction?
                                   startingprice(sellerask)
 
 
+
+
+27/5/2019
+
+go back to basics, 1 buyer, 2 buyer etc
+[test34]
+
+
+2/5/2019
+
+[test34] potential reward shaping added

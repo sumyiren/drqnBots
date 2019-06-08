@@ -9,7 +9,7 @@ from drqnMLEngine.DRQNseller import dqrnSeller
 class Trainer(object):
 
     def __init__(self, args):
-        self.nSellers = 3
+        self.nSellers = 2
         self.reward_record = []
 
         self.n_agents = self.nSellers

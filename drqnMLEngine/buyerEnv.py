@@ -25,6 +25,8 @@ class buyerEnv(gym.Env):
         
 
         self.steps_beyond_done = None
+        self.shaping = None
+        self.prev_shaping = None
 
 
         
@@ -83,6 +85,8 @@ class buyerEnv(gym.Env):
 #        return reward
 
     def reset(self):
+        self.shaping = None
+        self.prev_shaping = None
         self.state = [self.sellerStartingPrice, self.buyerStartingPrice, self.maxPrice, self.timeLeft]
         return np.array(self.state)
 

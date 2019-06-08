@@ -95,8 +95,8 @@ class world():
         self.buyerStackStates = self.getBuyerStackStates()   
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
-            self.sellerRewards[i] = self.calcSellerReward(self.buyerStates[i][0], self.buyerStates[i][1], self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice,  done)
-            self.buyerRewards[i] = self.calcBuyerReward(self.buyerStates[i][0], self.buyerStates[i][1], self.sellerEnvs[i].minPrice, self.buyerEnvs[i].maxPrice,  done)
+            self.sellerRewards[i] = self.calcSellerReward(self.sellerEnvs[i], self.buyerStates[i][0], self.buyerStates[i][1], done)
+            self.buyerRewards[i] = self.calcBuyerReward(self.buyerEnvs[i], self.buyerStates[i][0], self.buyerStates[i][1], done)
 
         if done: 
             self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
@@ -105,47 +105,72 @@ class world():
         return self.sellerStackStates, self.buyerStackStates, self.sellerRewards, self.buyerRewards, done
         
 
-    def calcSellerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
+    def calcSellerReward(self, sellerEnv,  sellerask, buyerask, done):
+        minPrice = sellerEnv.minPrice
         reward = 0
-        goodDeal = maxPrice >= minPrice
         
         if done:
             if abs(sellerask - buyerask) <= 2 : #maybe 2? - deal made
-                reward += sellerask - minPrice
-            else:
-                if goodDeal: #gooddeal not made
-                    reward += -1 * abs(sellerask - buyerask)    
-                else: #bad deal not made - shouldnt punish
-                    reward += 0
                 
-        else:
-            if sellerask < minPrice:
-                reward += -1
+                if sellerask >= minPrice:
+                    reward += 2*(sellerask - minPrice)
+                else:
+                    reward += - 0.1* abs(sellerask - minPrice)
+                    
+            else:
+                reward += -1*abs(sellerask-buyerask)
+                
+        else: #do reward shaping here
+#            if sellerask < minPrice:
+#                reward += -1
+#            if sellerask <=0:
+#                reward += -10
+            shaping = -1*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+      
+        
+            if abs(sellerask - buyerask) <= 2 :
+                shaping += sellerask - minPrice
+                
             if sellerask <=0:
-                reward += -1
+                shaping += -10
+                
+            if sellerEnv.prev_shaping is not None:
+                reward = shaping - sellerEnv.prev_shaping
+            sellerEnv.prev_shaping = shaping
+            
 
         return reward
         
 
-    def calcBuyerReward(self,  sellerask, buyerask, minPrice, maxPrice, done):
+    def calcBuyerReward(self, buyerEnv, sellerask, buyerask, done):
+        maxPrice = buyerEnv.maxPrice
         reward = 0
-        goodDeal = maxPrice >= minPrice
+        
         
         if done:
-            if abs(sellerask - buyerask) <= 2 : #maybe 2? - deal made
-                reward += maxPrice - buyerask
+            if abs(sellerask - buyerask) <= 2 : 
+                
+                if buyerask <= maxPrice:
+                    reward += 2*(maxPrice - buyerask)
+                else:
+                    reward += - 0.1* abs(maxPrice - buyerask) 
+                    
             else:
-                if goodDeal: #gooddeal not made
-                    reward += -1 * abs(sellerask - buyerask)    
-                else: #bad deal not made - shouldnt punish
-                    reward += 0
+                reward += -1*abs(sellerask-buyerask)
                 
         else:
-            if buyerask > maxPrice:
-                reward += -1
+            
+            shaping = -1*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+            
+            if abs(sellerask - buyerask) <= 2 :
+                shaping += maxPrice - buyerask
+            
             if buyerask <=0:
-                reward += -1
-
+                shaping += -10
+                
+            if buyerEnv.prev_shaping is not None:
+                reward = shaping - buyerEnv.prev_shaping
+            buyerEnv.prev_shaping = shaping
         return reward
         
     

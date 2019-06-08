@@ -35,6 +35,8 @@ class sellerEnv(gym.Env):
         
 
         self.steps_beyond_done = None
+        self.shaping = None
+        self.prev_shaping = None
         
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -97,6 +99,8 @@ class sellerEnv(gym.Env):
         
 
     def reset(self):
+        self.shaping = None
+        self.prev_shaping = None
         self.state = [self.sellerStartingPrice, self.buyerStartingPrice, self.minPrice, self.timeLeft]
         return self.state
 
