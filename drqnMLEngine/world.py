@@ -131,6 +131,9 @@ class world():
             if abs(sellerask - buyerask) <= 2 :
                 shaping += sellerask - minPrice
                 
+            if (sellerask - buyerask) < 0:
+                shaping += -1
+                
             if sellerask <=0:
                 shaping += -10
                 
@@ -219,15 +222,15 @@ class world():
         n1 = 2
         n2 = 200
         
-        self.minPrice = random.randint(n1,n2-1)
-        self.sellerStartingPrice = self.minPrice
+        self.minPrice = random.randint(n1,n2)
+        self.sellerStartingPrice = self.minPrice + random.randint(0, n2-self.minPrice)
         
         self.sellerEnvs = []
         self.buyerEnvs = []
         for i in range(self.nSellers):
             
-            self.maxPrice = random.randint(self.minPrice,n2)
-            self.buyerStartingPrice = random.randint(0, self.minPrice - 1)
+            self.maxPrice = random.randint(n1,n2)
+            self.buyerStartingPrice = random.randint(0, self.maxPrice - 1)
             
             self.sellerEnvs.append(sellerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.minPrice))
             self.buyerEnvs.append(buyerEnv(self.totalTime, self.sellerStartingPrice, self.buyerStartingPrice, self.maxPrice))
