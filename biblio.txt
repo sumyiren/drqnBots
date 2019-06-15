@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest35
+OUTPUT_PATH=./output/localtest36
 python task.py --job-dir $OUTPUT_PATH
 
 
