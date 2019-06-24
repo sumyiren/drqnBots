@@ -132,7 +132,7 @@ class world():
                 shaping += sellerask - minPrice
                 
             if (sellerask - buyerask) < 0:
-                shaping += -1
+                shaping += -10
                 
             if sellerask <=0:
                 shaping += -10

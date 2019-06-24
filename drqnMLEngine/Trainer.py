@@ -292,7 +292,6 @@ class Trainer(object):
                         self.sB[i].observation_set.append(self.sB[i].observation)
                     self.sB[i].terminal = False
                     
-                self.bB = self.scramble(self.bB) # seller 1 deals with buyer 1,2,3
                 
                 if self.count % 1 == 0:
                     print('------------------------------------')
@@ -301,6 +300,8 @@ class Trainer(object):
                         print(self.bB[i].observation)
                         print(self.sB[i].observation)
                 self.count = self.count + 1
+                
+                self.bB = self.scramble(self.bB) # seller 1 deals with buyer 1,2,3
 
                 self.isRandom = random.random() < self.Epsilon
  
