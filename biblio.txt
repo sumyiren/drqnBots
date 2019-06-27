@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest34
+OUTPUT_PATH=./output/localtest37
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -886,6 +886,21 @@ go back to basics, 1 buyer, 2 buyer etc
 [test34]
 
 
-2/5/2019
+2/6/2019
 
 [test34] potential reward shaping added
+
+
+14/6/2019
+[test35] 3 sellers
+
+[test36] adding back:
+             80              90                             100                             110
+|------------|---------------|---------------|---------------|---------------|---------------|---------------|
+
+     minPrice(seller)   startingprice(buyerask)     startingprice(sellerask)             maxPrice(buyer)
+
+
+24/6/2019
+
+[test37] shaping -10 for non following, revert back to test35 type (minPrice = startingPrice), 
