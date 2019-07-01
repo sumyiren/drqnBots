@@ -113,12 +113,12 @@ class world():
             if abs(sellerask - buyerask) <= 2 : #maybe 2? - deal made
                 
                 if sellerask >= minPrice:
-                    reward += 2*(sellerask - minPrice)
+                    reward += 1*(sellerask - minPrice)
                 else:
-                    reward += - 1* abs(sellerask - minPrice)
+                    reward += - 2* abs(sellerask - minPrice)
                     
             else:
-                reward += -2*abs(sellerask-buyerask)
+                reward += -3*abs(sellerask-buyerask)
                 
         else: #do reward shaping here
 #            if sellerask < minPrice:
@@ -154,16 +154,16 @@ class world():
             if abs(sellerask - buyerask) <= 2 : 
                 
                 if buyerask <= maxPrice:
-                    reward += 2*(maxPrice - buyerask)
+                    reward += 1*(maxPrice - buyerask)
                 else:
-                    reward += - 1* abs(maxPrice - buyerask) 
+                    reward += -2* abs(maxPrice - buyerask) 
                     
             else:
-                reward += -2*abs(sellerask-buyerask)
+                reward += -3*abs(sellerask-buyerask)
                 
         else:
             
-            shaping = -0.1*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+            shaping = -0.1*abs(sellerask-buyerask) 
             
             if abs(sellerask - buyerask) <= 2 :
                 shaping += 0.1*(maxPrice - buyerask)
@@ -178,14 +178,14 @@ class world():
         
     
     def calcFinalBuyerReward(self, buyerRewards, buyerStates):
-        currHighestBuyerAsk = 0
+        currLowestBuyerAsk = 0
         currHighestReward = None
         for i in range(len(buyerRewards)):
             if buyerRewards[i] > 0:
                 currHighestReward = buyerRewards[i]
                 buyerRewards[i] = 0
-                if buyerStates[i][1] > currHighestBuyerAsk:
-                    currHighestBuyerAsk = buyerStates[i][1]
+                if buyerStates[i][1] < currLowestBuyerAsk:
+                    currLowestBuyerAsk = buyerStates[i][1]
                     buyerRewards[i] = currHighestReward
                     
         return buyerRewards
