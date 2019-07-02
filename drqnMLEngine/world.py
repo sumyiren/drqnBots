@@ -178,7 +178,7 @@ class world():
         
     
     def calcFinalBuyerReward(self, buyerRewards, buyerStates):
-        currLowestBuyerAsk = 0
+        currLowestBuyerAsk = 10000
         currHighestReward = None
         for i in range(len(buyerRewards)):
             if buyerRewards[i] > 0:
