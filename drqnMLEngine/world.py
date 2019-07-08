@@ -105,7 +105,7 @@ class world():
         return self.sellerStackStates, self.buyerStackStates, self.sellerRewards, self.buyerRewards, done
         
 
-    def calcSellerReward(self, sellerEnv,  sellerask, buyerask, done):
+     def calcSellerReward(self, sellerEnv,  sellerask, buyerask, done):
         minPrice = sellerEnv.minPrice
         reward = 0
         
@@ -113,26 +113,26 @@ class world():
             if abs(sellerask - buyerask) <= 2 : #maybe 2? - deal made
                 
                 if sellerask >= minPrice:
-                    reward += 1*(sellerask - minPrice)
+                    reward += 2*(sellerask - minPrice)
                 else:
-                    reward += - 2* abs(sellerask - minPrice)
+                    reward += - 0.1* abs(sellerask - minPrice)
                     
             else:
-                reward += -3*abs(sellerask-buyerask)
+                reward += -1*abs(sellerask-buyerask)
                 
         else: #do reward shaping here
 #            if sellerask < minPrice:
 #                reward += -1
 #            if sellerask <=0:
 #                reward += -10
-            shaping = -0.1*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+            shaping = -1*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
       
         
             if abs(sellerask - buyerask) <= 2 :
-                shaping += 0.1*(sellerask - minPrice)
+                shaping += sellerask - minPrice
                 
             if (sellerask - buyerask) < 0:
-                shaping += -1
+                shaping += -10
                 
             if sellerask <=0:
                 shaping += -10
@@ -154,19 +154,19 @@ class world():
             if abs(sellerask - buyerask) <= 2 : 
                 
                 if buyerask <= maxPrice:
-                    reward += 1*(maxPrice - buyerask)
+                    reward += 2*(maxPrice - buyerask)
                 else:
-                    reward += -2* abs(maxPrice - buyerask) 
+                    reward += - 0.1* abs(maxPrice - buyerask) 
                     
             else:
-                reward += -3*abs(sellerask-buyerask)
+                reward += -1*abs(sellerask-buyerask)
                 
         else:
             
-            shaping = -0.1*abs(sellerask-buyerask) 
+            shaping = -1*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
             
             if abs(sellerask - buyerask) <= 2 :
-                shaping += 0.1*(maxPrice - buyerask)
+                shaping += maxPrice - buyerask
             
             if buyerask <=0:
                 shaping += -10

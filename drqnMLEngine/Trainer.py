@@ -251,6 +251,8 @@ class Trainer(object):
                     print('DONE')
                     for i in range(self.nSellers):
                         print('Case ' +str(i))
+                        print(self.bB[i].observation)
+                        print(self.sB[i].observation)
                         print('SellerAsk = ' +str(obs_buyer_[i][0])
                         + 'BuyerAsk = ' + str(obs_buyer_[i][1]) 
                         + 'RewardSeller = ' + str(self.sB[i].reward) 
