@@ -105,7 +105,7 @@ class world():
         return self.sellerStackStates, self.buyerStackStates, self.sellerRewards, self.buyerRewards, done
         
 
-     def calcSellerReward(self, sellerEnv,  sellerask, buyerask, done):
+    def calcSellerReward(self, sellerEnv,  sellerask, buyerask, done):
         minPrice = sellerEnv.minPrice
         reward = 0
         
