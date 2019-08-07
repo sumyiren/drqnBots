@@ -24,8 +24,8 @@ Num_episode_plot = 30
 
 # DRQN Parameters
 #step_size = 4
-lstm_size = 50
-hiddenlayer2_size = 50
+lstm_size = 200
+hiddenlayer2_size = 100
 flatten_size = (2*nSellers)+2
 
 class dqrnSeller(object):

@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest39
+OUTPUT_PATH=./output/localtest41
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -912,3 +912,10 @@ task is to expand testing module to give 3 different starting prices to buyers
 
 27/7/2019
 [Test39] Changing model to have two hidden layers
+
+
+5/8/2019
+
+problem we are facing, make the -0.5 * too large, and it wont make a deal to keep it low, make it -0.1* and it takes stupid deals
+
+[Test41] Add negative 0.5 to no deal also
