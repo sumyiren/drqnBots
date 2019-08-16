@@ -130,11 +130,11 @@ class world():
 #            if sellerask <=0:
 #                reward += -10
             shaping = -1*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
-      
+            shaping += 0.25*(sellerask - minPrice)
         
             if abs(sellerask - buyerask) <= 2 :
-                shaping += sellerask - minPrice
-                
+                shaping = sellerask - minPrice
+            
             if (sellerask - buyerask) < 0:
                 shaping += -10
                 
@@ -166,14 +166,15 @@ class world():
                 reward += -1*abs(sellerask-buyerask)
                 reward += - 0.5* abs(maxPrice - buyerask)
                 
-            if sellerask <=0:
+            if buyerask <=0:
                 reward = -1000
         else:
             
             shaping = -1*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+            shaping += 0.25*(maxPrice - buyerask)
             
             if abs(sellerask - buyerask) <= 2 :
-                shaping += maxPrice - buyerask
+                shaping = maxPrice - buyerask
             
             if buyerask <=0:
                 shaping += -10
