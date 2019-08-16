@@ -902,6 +902,7 @@ go back to basics, 1 buyer, 2 buyer etc
 
 
 24/6/2019
+test35 good?
 
 [test37] shaping -10 for non following, revert back to test35 type (minPrice = startingPrice), 
 
@@ -919,3 +920,13 @@ task is to expand testing module to give 3 different starting prices to buyers
 problem we are facing, make the -0.5 * too large, and it wont make a deal to keep it low, make it -0.1* and it takes stupid deals
 
 [Test41] Add negative 0.5 to no deal also
+
+
+15/8/2019
+
+Test 41 4500 okay model,
+
+
+[Test43] Fixed small boo boo
+
+[Test44] Remove hidden layer?

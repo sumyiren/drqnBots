@@ -133,7 +133,7 @@ class world():
             shaping += 0.25*(sellerask - minPrice)
         
             if abs(sellerask - buyerask) <= 2 :
-                shaping = sellerask - minPrice
+                shaping += sellerask - minPrice
             
             if (sellerask - buyerask) < 0:
                 shaping += -10
@@ -174,7 +174,7 @@ class world():
             shaping += 0.25*(maxPrice - buyerask)
             
             if abs(sellerask - buyerask) <= 2 :
-                shaping = maxPrice - buyerask
+                shaping += maxPrice - buyerask
             
             if buyerask <=0:
                 shaping += -10
