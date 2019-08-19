@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest42
+OUTPUT_PATH=./output/localtest44
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -929,4 +929,4 @@ Test 41 4500 okay model,
 
 [Test43] Fixed small boo boo
 
-[Test44] Remove hidden layer?
+[Test44] Fix errorneous logic
