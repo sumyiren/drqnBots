@@ -95,8 +95,8 @@ class world():
         self.buyerStackStates = self.getBuyerStackStates()   
         #calc rewards for seller and buyer
         for i in range(self.nSellers):
-            self.sellerRewards[i] = self.calcSellerReward(self.sellerEnvs[i], self.buyerStates[i][0], self.buyerStates[i][1], done)
-            self.buyerRewards[i] = self.calcBuyerReward(self.buyerEnvs[i], self.buyerStates[i][0], self.buyerStates[i][1], done)
+            self.sellerRewards[i] = self.calcSellerReward(self.sellerEnvs[i], self.buyerStates[i][0], self.buyerStates[i][1], self.buyerStates[i][-1], done)
+            self.buyerRewards[i] = self.calcBuyerReward(self.buyerEnvs[i], self.buyerStates[i][0], self.buyerStates[i][1], self.buyerStates[i][-1], done)
 
         if done: 
             self.sellerRewards = self.calcFinalSellerReward(self.sellerRewards)
@@ -105,7 +105,7 @@ class world():
         return self.sellerStackStates, self.buyerStackStates, self.sellerRewards, self.buyerRewards, done
         
 
-    def calcSellerReward(self, sellerEnv,  sellerask, buyerask, done):
+    def calcSellerReward(self, sellerEnv,  sellerask, buyerask, timeLeft, done):
         minPrice = sellerEnv.minPrice
         reward = 0
         
@@ -129,7 +129,7 @@ class world():
 #                reward += -1
 #            if sellerask <=0:
 #                reward += -10
-            shaping = -0.5*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+            shaping = -2/timeLeft*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
             shaping += 0.25*(sellerask - minPrice)
         
             if (sellerask - buyerask) < 0:
@@ -146,7 +146,7 @@ class world():
         return reward
         
 
-    def calcBuyerReward(self, buyerEnv, sellerask, buyerask, done):
+    def calcBuyerReward(self, buyerEnv, sellerask, buyerask, timeLeft, done):
         maxPrice = buyerEnv.maxPrice
         reward = 0
         
@@ -160,14 +160,13 @@ class world():
                     reward += - 0.5* abs(maxPrice - buyerask) 
                     
             else:
-                reward += -1*abs(sellerask-buyerask)
+                reward += -5*abs(sellerask-buyerask)
                 reward += 0.5* abs(maxPrice - buyerask)
                 
             if buyerask <=0:
                 reward = -1000
         else:
-            
-            shaping = -0.5*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+            shaping = -5/timeLeft*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
             shaping += 0.25*(maxPrice - buyerask)
             
             if buyerask <=0:

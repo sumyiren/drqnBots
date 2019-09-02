@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest44
+OUTPUT_PATH=./output/localtest45
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -930,3 +930,8 @@ Test 41 4500 okay model,
 [Test43] Fixed small boo boo
 
 [Test44] Fix errorneous logic
+seller seems to be doing the job, buyer too weak??
+
+
+2/9/2019
+[Test45] Adding urgency to making a deal
