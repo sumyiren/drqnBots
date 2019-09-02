@@ -118,8 +118,9 @@ class world():
                     reward += - 0.5* abs(sellerask - minPrice)
                     
             else:
-                reward += -1*abs(sellerask-buyerask)
-                reward += 0.5* abs(sellerask - minPrice)
+#                reward += -1*abs(sellerask-buyerask)
+#                reward += 0.5* abs(sellerask - minPrice)
+                reward = 0
             
             if sellerask <=0:
                 reward = -1000
@@ -160,8 +161,9 @@ class world():
                     reward += - 0.5* abs(maxPrice - buyerask) 
                     
             else:
-                reward += -1*abs(sellerask-buyerask)
-                reward += 0.5* abs(maxPrice - buyerask)
+#                reward += -1*abs(sellerask-buyerask)
+#                reward += 0.5* abs(maxPrice - buyerask)
+                reward = 0
                 
             if buyerask <=0:
                 reward = -1000
