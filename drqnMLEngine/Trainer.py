@@ -18,7 +18,7 @@ class Trainer(object):
         self.maxSellerReward = -100
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
-        self.max_steps = 200
+        self.max_steps = 50
         self.n_episode = 5550
 
         # Parameter setting
@@ -34,7 +34,7 @@ class Trainer(object):
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
-        self.step_size = 50
+        self.step_size = 49
         self.teamSpirit = 0
         self.teamSpirit_epsilon = 1/self.n_episode
         self.world = world(self.nSellers, self.max_steps, self.teamSpirit)

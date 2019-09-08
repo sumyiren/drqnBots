@@ -68,12 +68,11 @@ class world():
     
     def getBuyerStackStates(self):
         buyerStackStates = []
+        maxOffer = max([el[1] for el in self.buyerStates])
         for i in range(self.nSellers):
             temp = []
             temp.extend(self.buyerStates[i][0:2])
-            for j in range(self.nSellers):
-                if i != j:
-                    temp.extend(self.buyerStates[j][1:2])
+            temp.append(maxOffer)
             temp.extend(self.buyerStates[i][-2:])
             buyerStackStates.append(temp)
         return buyerStackStates
@@ -130,8 +129,8 @@ class world():
 #                reward += -1
 #            if sellerask <=0:
 #                reward += -10
-            shaping = -5/timeLeft*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
-            shaping += 0.25*(sellerask - minPrice)
+            shaping = -2/timeLeft*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+            shaping += 1/timeLeft if (sellerask - minPrice) > 0 else -1/timeLeft
         
             if (sellerask - buyerask) < 0:
                 shaping += -10
@@ -166,8 +165,8 @@ class world():
             if buyerask <=0:
                 reward = -1000
         else:
-            shaping = -5/timeLeft*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
-            shaping += 0.25*(maxPrice - buyerask)
+            shaping = -2/timeLeft*abs(sellerask-buyerask) # And ten points for legs contact, the idea is if you
+            shaping += 1/timeLeft if (maxPrice - buyerask) > 0 else -1/timeLeft
             
             if buyerask <=0:
                 shaping += -10
@@ -221,7 +220,7 @@ class world():
         
     def reset(self):
         n1 = 2
-        n2 = 200
+        n2 = self.totalTime
         
         self.minPrice = random.randint(n1,n2-1)
         self.sellerStartingPrice = self.minPrice

@@ -27,7 +27,7 @@ Num_episode_plot = 30
 
 lstm_size = 200
 hiddenlayer2_size = 100
-flatten_size = (nSellers-1)+4
+flatten_size = 5
 
 class dqrnBuyer(object):
     def __init__(self, scope):
