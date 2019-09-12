@@ -25,8 +25,8 @@ Num_episode_plot = 30
 # DRQN Parameters
 #step_size = 4
 
-lstm_size = 200
-hiddenlayer2_size = 100
+lstm_size = 256
+# hiddenlayer2_size = 100
 flatten_size = 5
 
 class dqrnBuyer(object):
@@ -59,12 +59,9 @@ class dqrnBuyer(object):
             self.x = tf.placeholder(tf.float32, shape = [None, flatten_size], name="x")
             
                 
-            self.w_fc1 = self.weight_variable([lstm_size, hiddenlayer2_size])
-            self.b_fc1 = self.bias_variable([hiddenlayer2_size])
+            self.w_fc = self.weight_variable([lstm_size, Num_action])
+            self.b_fc = self.bias_variable([Num_action])
             
-            self.w_fc2 = self.weight_variable([hiddenlayer2_size, Num_action])
-            self.b_fc2 = self.bias_variable([Num_action])
-        
             self.rnn_batch_size = tf.placeholder(dtype = tf.int32, name="rnn_batch_size")
             self.rnn_step_size  = tf.placeholder(dtype = tf.int32, name="rnn_step_size")
     
@@ -79,8 +76,7 @@ class dqrnBuyer(object):
             self.rnn_out = tf.reshape(self.rnn_out, shape = [-1 , lstm_size])
     
 
-            self.layer1 = tf.add(tf.matmul(self.rnn_out, self.w_fc1), self.b_fc1, name="op_to_restore1")
-            self.output = tf.add(tf.matmul(self.layer1, self.w_fc2), self.b_fc2, name="op_to_restore2")
+            self.output = tf.add(tf.matmul(self.rnn_out, self.w_fc), self.b_fc, name="op_to_restore")
     
             # Loss function and Train 
             self.action_target = tf.placeholder(tf.float32, shape = [None, Num_action])

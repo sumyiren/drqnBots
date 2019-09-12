@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest45
+OUTPUT_PATH=./output/localtest47
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -935,3 +935,21 @@ seller seems to be doing the job, buyer too weak??
 
 2/9/2019
 [Test45] Adding urgency to making a deal
+
+
+7/9/2019
+[Test46] Changing it so that only the highest current negotiated value is shown
+
+
+12/9/2019
+
+
+[[8.0, -2.0, 10.0, 1.0, 54.0, -3.0, 25, 7], 
+[10.0, 1.0, 8.0, -2.0, 54.0, -3.0, 25, 7], 
+[54.0, -3.0, 8.0, -2.0, 10.0, 1.0, 25, 7]]
+
+[[8.0, -2.0, 1.0, 30.0, 7.0], 
+[10.0, 1.0, 1.0, 35.0, 7.0], 
+[54.0, -3.0, 1.0, 40.0, 7.0]]
+
+[test48] reverting to 1 layer
