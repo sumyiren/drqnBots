@@ -18,14 +18,14 @@ class Trainer(object):
         self.maxSellerReward = -100
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
-        self.max_steps = 50
+        self.max_steps = 100
         self.n_episode = 5550
 
         # Parameter setting
         self.Num_action = 3
         self.Gamma = 0.99
         self.Learning_rate = 0.00025
-        self.Epsilon = 0.2 #super greedy policy
+        self.Epsilon = 0.3 #super greedy policy
         self.Final_epsilon = 0.01
         self.Epsilon_epsilon = (self.Epsilon - self.Final_epsilon)/self.n_episode
 
@@ -34,7 +34,7 @@ class Trainer(object):
         self.Num_training = self.n_episode*self.max_steps
 
         # DRQN Parameters
-        self.step_size = 49
+        self.step_size = 50
         self.teamSpirit = 0
         self.teamSpirit_epsilon = 1/self.n_episode
         self.world = world(self.nSellers, self.max_steps, self.teamSpirit)
