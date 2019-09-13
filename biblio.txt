@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest47
+OUTPUT_PATH=./output/localtest49
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -953,3 +953,20 @@ seller seems to be doing the job, buyer too weak??
 [54.0, -3.0, 1.0, 40.0, 7.0]]
 
 [test48] reverting to 1 layer
+
+
+13/9/2019
+
+moving back to this:
+             5              90                              15                             110
+|------------|---------------|---------------|---------------|---------------|---------------|---------------|
+
+     minPrice(seller)   startingprice(buyerask)     startingprice(sellerask)             maxPrice(buyer)
+
+buyer optimizes for (maxPrice - current)
+seller optimizes for (minPrice - current)
+
+[test49] account for above
+
+
+[test50] two layers again
