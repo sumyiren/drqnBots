@@ -18,7 +18,7 @@ class Trainer(object):
         self.maxSellerReward = -100
         self.maxBuyerReward = -100
         self.maxRewardSum = -100
-        self.max_steps = 60
+        self.max_steps = 160
         self.n_episode = 5550
 
         # Parameter setting

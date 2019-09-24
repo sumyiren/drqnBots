@@ -119,7 +119,7 @@ class world():
             else:
 #                reward += -1*abs(sellerask-buyerask)
 #                reward += 0.5* abs(sellerask - minPrice)
-                reward = 0
+                reward = 0 
             
             if sellerask <=0:
                 reward = -1000

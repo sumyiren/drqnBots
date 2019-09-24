@@ -457,7 +457,7 @@ a restart helps :)
 epsilon fixed to 10% random i.e quite greedy
 
 
-OUTPUT_PATH=./output/localtest49
+OUTPUT_PATH=./output/localtest51
 python task.py --job-dir $OUTPUT_PATH
 
 
@@ -970,3 +970,15 @@ seller optimizes for (minPrice - current)
 
 
 [test50] two layers again
+
+not hitting the limits of what the buyer would pay, are sellers not incentivised enough to push harder?
+
+
+17/9/2019
+
+rather interesting results for test49 and test50, more investigation required.
+
+
+24/9/2019
+
+50 looks promising, [Test51] larger number of steps
